@@ -30,3 +30,5 @@ fsm.Trigger(Event.E3);
 // State change to S3 from S2
 // Enter to final state
 ```
+
+[More details in the test console application...](Test/ConsoleApp/Program.cs)
