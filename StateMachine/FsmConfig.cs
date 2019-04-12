@@ -48,7 +48,7 @@ namespace RandomSolutions
             return this;
         }
 
-        public FsmStateConfig<TState, TEvent> If(Func<FsmEnterArgs<TState, TEvent>, bool> fn)
+        public FsmStateConfig<TState, TEvent> Enable(Func<FsmEnterArgs<TState, TEvent>, bool> fn)
         {
             Model.Enable = fn;
             return this;
@@ -69,7 +69,7 @@ namespace RandomSolutions
             return this;
         }
 
-        public FsmEventConfig<TState, TEvent> If(Func<FsmTriggerArgs<TState, TEvent>, bool> fn)
+        public FsmEventConfig<TState, TEvent> Enable(Func<FsmTriggerArgs<TState, TEvent>, bool> fn)
         {
             Model.Enable = fn;
             return this;
