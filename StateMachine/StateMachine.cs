@@ -57,12 +57,15 @@ namespace RandomSolutions
             }
 
             _model.OnFire?.Invoke(args);
-
-            var current = Current;
+            
             var result = eventModel.Execute?.Invoke(args);
 
-            if (object.Equals(current, Current) && eventModel.JumpTo != null)
-                JumpTo(eventModel.JumpTo.Invoke(args));
+            if (eventModel.JumpTo != null)
+            {
+                var done = JumpTo(eventModel.JumpTo.Invoke(args));
+                if (eventModel.Execute == null)
+                    result = done;
+            }
 
             return result;
         }

@@ -16,8 +16,8 @@
     <RootNamespace>RandomSolutions</RootNamespace>
     <Product>RandomSolutions.StateMachine</Product>
     <Title>RandomSolutions.StateMachine</Title>
-    <Description>Convert Excel to C# object</Description>
-    <PackageTags>excel xlsx xls convert parse map mapping</PackageTags>
+    <Description>Finite-state machine (FSM) pattern implementation</Description>
+    <PackageTags>statemachine finitestatemachine fsm</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mustaddon/StateMachine</PackageProjectUrl>

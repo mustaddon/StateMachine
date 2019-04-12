@@ -19,7 +19,7 @@ namespace ConsoleApp
                 .State(State.S1)
                     .OnEnter(_consoleWrite)
                     .OnExit(_consoleWrite)
-                    .On(Event.E1).Execute(x => { Console.WriteLine($"Execute {x.Fsm.Current}>{x.Event}"); return true; })
+                    .On(Event.E1).Execute(x => { Console.WriteLine($"Execute {x.Fsm.Current}>{x.Event}"); return "some data"; })
                     .On(Event.E2).JumpTo(State.S2)
                     .On(Event.E3).JumpTo(State.S3)
                 .State(State.S2)
