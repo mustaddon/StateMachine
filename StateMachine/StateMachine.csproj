@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net35;net40</TargetFrameworks>
+    <AssemblyName>RandomSolutions.StateMachine</AssemblyName>
+    <RootNamespace>RandomSolutions</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+	
+	<AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <Version>1.0.0</Version>
+    <Company></Company>
+    <Authors>Leonid Salavatov</Authors>
+    <Copyright>Leonid Salavatov 2019</Copyright>
+    <RootNamespace>RandomSolutions</RootNamespace>
+    <Product>RandomSolutions.StateMachine</Product>
+    <Title>RandomSolutions.StateMachine</Title>
+    <Description>Convert Excel to C# object</Description>
+    <PackageTags>excel xlsx xls convert parse map mapping</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/mustaddon/StateMachine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mustaddon/StateMachine</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <NeutralLanguage />
+	<PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>Core;STANDARD20</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net35'">
+    <DefineConstants>NET35;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
+    <DefineConstants>NET40;NETFULL</DefineConstants>
+  </PropertyGroup>
+  
+</Project>
