@@ -10,7 +10,7 @@ namespace RandomSolutions
         public Action<FsmEnterArgs<TState, TEvent>> OnChange { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnTrigger { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnFire { get; set; }
-        public Action<FsmException> OnError { get; set; }
+        public Action<FsmErrorArgs<TState, TEvent>> OnError { get; set; }
         public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; } = new Dictionary<TState, FsmStateModel<TState, TEvent>>();
     }
 

@@ -9,13 +9,14 @@ namespace RandomSolutions
     {
         public FsmBuilder(TState start)
         {
-            _model = new FsmModel<TState, TEvent> {
+            _model = new FsmModel<TState, TEvent>
+            {
                 Start = start,
                 States = new Dictionary<TState, FsmStateModel<TState, TEvent>>(),
             };
         }
 
-        public FsmBuilder<TState, TEvent> OnError(Action<FsmException> action)
+        public FsmBuilder<TState, TEvent> OnError(Action<FsmErrorArgs<TState, TEvent>> action)
         {
             _model.OnError = action;
             return this;
@@ -55,8 +56,6 @@ namespace RandomSolutions
             };
         }
 
-        public IStateMachine<TState, TEvent> Build() => new StateMachine<TState, TEvent>(BuildModel());
-
         public FsmModel<TState, TEvent> BuildModel()
         {
             if (!_model.States.ContainsKey(_model.Start))
@@ -64,6 +63,10 @@ namespace RandomSolutions
 
             return _model;
         }
+
+        public virtual IStateMachine<TState, TEvent> Build()
+            => new StateMachine<TState, TEvent>(BuildModel());
+
 
         FsmModel<TState, TEvent> _model;
         const string _startNotContains = "States collection is not contains start point";

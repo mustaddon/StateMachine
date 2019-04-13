@@ -15,7 +15,7 @@ namespace ConsoleApp
             var fsm = new FsmBuilder<State, Event>(State.S1)
                 .OnChange(x => Console.WriteLine($"On state change to {x.Fsm.Current} from {x.PrevState}"))
                 .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
-                .OnError(x => Console.WriteLine($"On error {x}"))
+                .OnError(x => Console.WriteLine($"On error {x.Fsm.Current}: {x.Message}"))
                 .State(State.S1)
                     .OnEnter(_consoleWrite)
                     .OnExit(_consoleWrite)

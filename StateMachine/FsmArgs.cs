@@ -24,4 +24,9 @@ namespace RandomSolutions
     {
         public TState PrevState { get; internal set; }
     }
+
+    public class FsmErrorArgs<TState, TEvent> : FsmArgs<TState, TEvent>
+    {
+        public string Message { get; internal set; }
+    }
 }

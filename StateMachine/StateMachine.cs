@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RandomSolutions
 {
-    public class StateMachine<TState,TEvent> : IStateMachine<TState, TEvent>
+    public class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
     {
         FsmModel<TState, TEvent> _model;
 
@@ -14,11 +14,11 @@ namespace RandomSolutions
             _model = model;
             Current = model.Start;
         }
-        
+
         public TState Current { get; private set; }
 
         public IEnumerable<TEvent> GetEvents(params object[] data)
-        { 
+        {
             return _model.States[Current].Events
                 .Where(x => x.Value.Enable?.Invoke(new FsmTriggerArgs<TState, TEvent>
                 {
@@ -44,20 +44,20 @@ namespace RandomSolutions
 
             if (!stateModel.Events.ContainsKey(e))
             {
-                _model.OnError?.Invoke(new FsmException(_eventNotFound));
+                _model.OnError?.Invoke(_getErrorArgs(data, _eventNotFound, e));
                 return null;
             }
 
             var eventModel = stateModel.Events[e];
-            
+
             if (eventModel.Enable?.Invoke(args) == false)
             {
-                _model.OnError?.Invoke(new FsmException(_eventDisabled));
+                _model.OnError?.Invoke(_getErrorArgs(data, _eventDisabled, e));
                 return null;
             }
 
             _model.OnFire?.Invoke(args);
-            
+
             var result = eventModel.Execute?.Invoke(args);
 
             if (eventModel.JumpTo != null)
@@ -74,7 +74,7 @@ namespace RandomSolutions
         {
             if (!_model.States.ContainsKey(next))
             {
-                _model.OnError?.Invoke(new FsmException(_stateNextNotFound));
+                _model.OnError?.Invoke(_getErrorArgs(data, _stateNextNotFound, next));
                 return false;
             }
 
@@ -89,11 +89,11 @@ namespace RandomSolutions
 
             if (nextModel.Enable?.Invoke(args) == false)
             {
-                _model.OnError?.Invoke(new FsmException(_stateNextDisabled));
+                _model.OnError?.Invoke(_getErrorArgs(data, _stateNextDisabled, next));
                 return false;
             }
 
-             _model.States[Current].OnExit?.Invoke(new FsmExitArgs<TState, TEvent>
+            _model.States[Current].OnExit?.Invoke(new FsmExitArgs<TState, TEvent>
             {
                 Fsm = this,
                 NextState = next,
@@ -112,10 +112,22 @@ namespace RandomSolutions
         public Type GetStateType() => typeof(TState);
         public Type GetEventType() => typeof(TEvent);
 
-        const string _stateNextDisabled = "Next state disabled";
-        const string _stateNextNotFound = "Next state not found";
-        const string _eventDisabled = "Event disabled";
-        const string _eventNotFound = "Event not found";
+
+        FsmErrorArgs<TState, TEvent> _getErrorArgs(object[] data, string message, params object[] formatArgs)
+        {
+            return new FsmErrorArgs<TState, TEvent>
+            {
+                Fsm = this,
+                Data = data,
+                Message = string.Format(message, formatArgs),
+            };
+        }
+
+        const string _stateNextDisabled = "Next state '{0}' disabled";
+        const string _stateNextNotFound = "Next state '{0}' not found";
+        const string _eventDisabled = "Event '{0}' disabled";
+        const string _eventNotFound = "Event '{0}' not found";
+
     }
-    
+
 }
