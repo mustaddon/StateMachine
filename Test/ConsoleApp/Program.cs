@@ -13,9 +13,9 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             var fsm = new FsmBuilder<State, Event>(State.S1)
-                .OnChange(x => Console.WriteLine($"On state change to {x.Fsm.Current} from {x.PrevState}"))
-                .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
+                .OnJump(x => Console.WriteLine($"On jump to {x.Fsm.Current} from {x.PrevState}"))
                 .OnReset(x => Console.WriteLine($"On reset to {x.Fsm.Current} from {x.PrevState}"))
+                .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
                 .OnError(x => Console.WriteLine($"On error {x.Fsm.Current}: {x.Message}"))
                 .State(State.S1)
                     .OnEnter(_consoleWrite)
@@ -35,8 +35,7 @@ namespace ConsoleApp
             foreach (var e in new[] { Event.E1, Event.E2, Event.E1, Event.E3, Event.E1 })
             {
                 Console.WriteLine($"{fsm.Current}: {string.Join(", ", fsm.GetEvents())}");
-                Console.WriteLine($"Result: {fsm.Trigger(e)}");
-                Console.WriteLine();
+                Console.WriteLine($"Result: {fsm.Trigger(e)}\n");
             }
 
             fsm.Reset();

@@ -100,7 +100,7 @@ namespace RandomSolutions
 
             Current = next;
 
-            _model.OnChange?.Invoke(args);
+            _model.OnJump?.Invoke(args);
 
             nextModel.OnEnter?.Invoke(args);
 

@@ -21,15 +21,9 @@ namespace RandomSolutions
             return this;
         }
 
-        public FsmBuilder<TState, TEvent> OnError(Action<FsmErrorArgs<TState, TEvent>> action)
+        public FsmBuilder<TState, TEvent> OnJump(Action<FsmEnterArgs<TState, TEvent>> action)
         {
-            _model.OnError = action;
-            return this;
-        }
-
-        public FsmBuilder<TState, TEvent> OnChange(Action<FsmEnterArgs<TState, TEvent>> action)
-        {
-            _model.OnChange = action;
+            _model.OnJump = action;
             return this;
         }
 
@@ -42,6 +36,12 @@ namespace RandomSolutions
         public FsmBuilder<TState, TEvent> OnFire(Action<FsmTriggerArgs<TState, TEvent>> action)
         {
             _model.OnFire = action;
+            return this;
+        }
+
+        public FsmBuilder<TState, TEvent> OnError(Action<FsmErrorArgs<TState, TEvent>> action)
+        {
+            _model.OnError = action;
             return this;
         }
 

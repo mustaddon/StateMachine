@@ -7,7 +7,7 @@ namespace RandomSolutions
     public class FsmModel<TState, TEvent>
     {
         public TState Start { get; set; }
-        public Action<FsmEnterArgs<TState, TEvent>> OnChange { get; set; }
+        public Action<FsmEnterArgs<TState, TEvent>> OnJump { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnTrigger { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnFire { get; set; }
         public Action<FsmErrorArgs<TState, TEvent>> OnError { get; set; }
