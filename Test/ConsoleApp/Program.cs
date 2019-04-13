@@ -15,6 +15,7 @@ namespace ConsoleApp
             var fsm = new FsmBuilder<State, Event>(State.S1)
                 .OnChange(x => Console.WriteLine($"On state change to {x.Fsm.Current} from {x.PrevState}"))
                 .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
+                .OnReset(x => Console.WriteLine($"On reset to {x.Fsm.Current} from {x.PrevState}"))
                 .OnError(x => Console.WriteLine($"On error {x.Fsm.Current}: {x.Message}"))
                 .State(State.S1)
                     .OnEnter(_consoleWrite)
@@ -30,18 +31,20 @@ namespace ConsoleApp
                     .OnEnter(_consoleWrite)
                     .OnExit(_consoleWrite)
                 .Build();
-            
+
             foreach (var e in new[] { Event.E1, Event.E2, Event.E1, Event.E3, Event.E1 })
             {
-                Console.WriteLine($"{fsm.Current}: " + string.Join(", ", fsm.GetEvents()));
-                Console.WriteLine("Result: " + fsm.Trigger(e));
+                Console.WriteLine($"{fsm.Current}: {string.Join(", ", fsm.GetEvents())}");
+                Console.WriteLine($"Result: {fsm.Trigger(e)}");
                 Console.WriteLine();
             }
+
+            fsm.Reset();
         }
 
 
 
-        static void _consoleWrite(FsmEnterArgs<State, Event> x) 
+        static void _consoleWrite(FsmEnterArgs<State, Event> x)
             => Console.WriteLine($"Enter state {x.Fsm.Current} from {x.PrevState}");
 
         static void _consoleWrite(FsmExitArgs<State, Event> x)

@@ -8,12 +8,17 @@ namespace RandomSolutions
     public class FsmBuilder<TState, TEvent>
     {
         public FsmBuilder(TState start)
+            : this(new FsmModel<TState, TEvent> { Start = start }) { }
+
+        public FsmBuilder(FsmModel<TState, TEvent> model)
         {
-            _model = new FsmModel<TState, TEvent>
-            {
-                Start = start,
-                States = new Dictionary<TState, FsmStateModel<TState, TEvent>>(),
-            };
+            _model = model;
+        }
+
+        public FsmBuilder<TState, TEvent> OnReset(Action<FsmResetArgs<TState, TEvent>> action)
+        {
+            _model.OnReset = action;
+            return this;
         }
 
         public FsmBuilder<TState, TEvent> OnError(Action<FsmErrorArgs<TState, TEvent>> action)

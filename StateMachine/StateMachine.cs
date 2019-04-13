@@ -109,6 +109,19 @@ namespace RandomSolutions
             return true;
         }
 
+        public void ResetTo(TState state)
+        {
+            var args = new FsmResetArgs<TState, TEvent>
+            {
+                Fsm = this,
+                PrevState = Current,
+            };
+
+            Current = state;
+            _model.OnReset?.Invoke(args);
+        }
+
+        public void Reset() => ResetTo(_model.Start);
         public Type GetStateType() => typeof(TState);
         public Type GetEventType() => typeof(TEvent);
 
