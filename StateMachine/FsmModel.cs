@@ -12,15 +12,19 @@ namespace RandomSolutions
         public Action<FsmTriggerArgs<TState, TEvent>> OnFire { get; set; }
         public Action<FsmErrorArgs<TState, TEvent>> OnError { get; set; }
         public Action<FsmResetArgs<TState, TEvent>> OnReset { get; set; }
-        public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; } = new Dictionary<TState, FsmStateModel<TState, TEvent>>();
+
+        public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; } 
+            = new Dictionary<TState, FsmStateModel<TState, TEvent>>();
     }
 
     public class FsmStateModel<TState, TEvent>
     {
-        public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; } = new Dictionary<TEvent, FsmEventModel<TState, TEvent>>();
         public Func<FsmEnterArgs<TState, TEvent>, bool> Enable { get; set; }
         public Action<FsmEnterArgs<TState, TEvent>> OnEnter { get; set; }
         public Action<FsmExitArgs<TState, TEvent>> OnExit { get; set; }
+
+        public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; } 
+            = new Dictionary<TEvent, FsmEventModel<TState, TEvent>>();
     }
 
     public class FsmEventModel<TState, TEvent>

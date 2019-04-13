@@ -7,8 +7,6 @@ namespace RandomSolutions
 {
     public class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
     {
-        FsmModel<TState, TEvent> _model;
-
         public StateMachine(FsmModel<TState, TEvent> model)
         {
             _model = model;
@@ -135,6 +133,8 @@ namespace RandomSolutions
                 Message = string.Format(message, formatArgs),
             };
         }
+
+        FsmModel<TState, TEvent> _model;
 
         const string _stateNextDisabled = "Next state '{0}' disabled";
         const string _stateNextNotFound = "Next state '{0}' not found";
