@@ -10,7 +10,7 @@ enum Event { E1, E2, E3 }
 
 ```C#
 var fsm = new FsmBuilder<State, Event>(State.S1)
-    .OnChange(x => Console.WriteLine($"State change to {x.Fsm.Current} from {x.PrevState}"))    
+    .OnJump(x => Console.WriteLine($"State change to {x.Fsm.Current} from {x.PrevState}"))    
     .State(State.S1)
         .On(Event.E1).Execute(x => { /* some operations */ return "some data"; })
         .On(Event.E2).JumpTo(State.S2)
@@ -21,9 +21,9 @@ var fsm = new FsmBuilder<State, Event>(State.S1)
     .Build();
 
 
-fsm.Trigger(Event.E1);
 fsm.Trigger(Event.E2);
 fsm.Trigger(Event.E3);
+
 
 // Console output:
 // State change to S2 from S1
