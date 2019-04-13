@@ -30,8 +30,7 @@ namespace ConsoleApp
                     .OnEnter(_consoleWrite)
                     .OnExit(_consoleWrite)
                 .Build();
-
-
+            
             foreach (var e in new[] { Event.E1, Event.E2, Event.E1, Event.E3, Event.E1 })
             {
                 Console.WriteLine($"{fsm.Current}: " + string.Join(", ", fsm.GetEvents()));

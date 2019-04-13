@@ -55,14 +55,16 @@ namespace RandomSolutions
             };
         }
 
-        public StateMachine<TState, TEvent> Build()
+        public IStateMachine<TState, TEvent> Build() => new StateMachine<TState, TEvent>(BuildModel());
+
+        public FsmModel<TState, TEvent> BuildModel()
         {
             if (!_model.States.ContainsKey(_model.Start))
                 throw new Exception(_startNotContains);
 
-            return new StateMachine<TState, TEvent>(_model);
+            return _model;
         }
-        
+
         FsmModel<TState, TEvent> _model;
         const string _startNotContains = "States collection is not contains start point";
     }

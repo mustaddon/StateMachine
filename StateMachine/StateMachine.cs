@@ -109,6 +109,9 @@ namespace RandomSolutions
             return true;
         }
 
+        public Type GetStateType() => typeof(TState);
+        public Type GetEventType() => typeof(TEvent);
+
         const string _stateNextDisabled = "Next state disabled";
         const string _stateNextNotFound = "Next state not found";
         const string _eventDisabled = "Event disabled";

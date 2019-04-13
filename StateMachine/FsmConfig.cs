@@ -11,8 +11,11 @@ namespace RandomSolutions
         public FsmStateConfig<TState, TEvent> State(TState state)
             => Root.State(state);
 
-        public StateMachine<TState, TEvent> Build()
+        public IStateMachine<TState, TEvent> Build()
             => Root.Build();
+
+        public FsmModel<TState, TEvent> BuildModel()
+            => Root.BuildModel();
     }
 
     public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
