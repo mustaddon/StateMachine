@@ -120,8 +120,6 @@ namespace RandomSolutions
         }
 
         public void Reset() => ResetTo(_model.Start);
-        public Type GetStateType() => typeof(TState);
-        public Type GetEventType() => typeof(TEvent);
 
 
         FsmErrorArgs<TState, TEvent> _getErrorArgs(object[] data, string message, params object[] formatArgs)

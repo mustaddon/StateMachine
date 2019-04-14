@@ -13,16 +13,12 @@ namespace RandomSolutions
         object Trigger(TEvent e, params object[] args);
 
         bool JumpTo(TState state, params object[] args);
-
-        void Reset();
-
+        
         void ResetTo(TState state);
     }
 
     public interface IStateMachine
     {
-        Type GetStateType();
-
-        Type GetEventType();
+        void Reset();
     }
 }
