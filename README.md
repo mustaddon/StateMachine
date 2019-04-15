@@ -1,6 +1,5 @@
 # StateMachine
-
-
+[![NuGet version](https://badge.fury.io/nu/RandomSolutions.StateMachine.svg)](http://badge.fury.io/nu/RandomSolutions.StateMachine)
 
 ## Example
 ```C#
