@@ -1,5 +1,5 @@
-# StateMachine
-[![NuGet version](https://badge.fury.io/nu/RandomSolutions.StateMachine.svg)](http://badge.fury.io/nu/RandomSolutions.StateMachine)
+# StateMachine [![NuGet version](https://badge.fury.io/nu/RandomSolutions.StateMachine.svg)](http://badge.fury.io/nu/RandomSolutions.StateMachine)
+Finite-state machine (FSM) pattern implementation
 
 ## Example
 ```C#
