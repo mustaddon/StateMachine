@@ -10,9 +10,9 @@ namespace RandomSolutions
 
         IEnumerable<TEvent> GetEvents(params object[] data);
 
-        object Trigger(TEvent e, params object[] args);
+        object Trigger(TEvent e, params object[] data);
 
-        bool JumpTo(TState state, params object[] args);
+        bool JumpTo(TState state, params object[] data);
         
         void ResetTo(TState state);
     }

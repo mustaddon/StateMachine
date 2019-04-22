@@ -13,7 +13,6 @@
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2019</Copyright>
-    <RootNamespace>RandomSolutions</RootNamespace>
     <Product>RandomSolutions.StateMachine</Product>
     <Title>RandomSolutions.StateMachine</Title>
     <Description>Finite-state machine (FSM) pattern implementation</Description>
