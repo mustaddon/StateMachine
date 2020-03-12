@@ -60,7 +60,7 @@ namespace RandomSolutions
 
             if (eventModel.JumpTo != null)
             {
-                var done = JumpTo(eventModel.JumpTo.Invoke(args));
+                var done = JumpTo(eventModel.JumpTo.Invoke(args), data);
                 if (eventModel.Execute == null)
                     result = done;
             }
@@ -106,6 +106,7 @@ namespace RandomSolutions
 
             return true;
         }
+        
 
         public void ResetTo(TState state)
         {
