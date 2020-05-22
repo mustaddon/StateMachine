@@ -18,7 +18,7 @@
     <Description>Finite-state machine (FSM) pattern implementation</Description>
     <PackageTags>statemachine finitestatemachine fsm</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/mustaddon/StateMachine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/StateMachine</RepositoryUrl>
 	  <RepositoryType>git</RepositoryType>
