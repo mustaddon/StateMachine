@@ -6,10 +6,9 @@
     <RootNamespace>RandomSolutions</RootNamespace>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
-	
-	  <AssemblyVersion>1.0.1</AssemblyVersion>
-    <FileVersion>1.0.1</FileVersion>
-    <Version>1.0.1</Version>
+	  <AssemblyVersion>1.0.2</AssemblyVersion>
+    <FileVersion>1.0.2</FileVersion>
+    <Version>1.0.2</Version>
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2020</Copyright>
@@ -22,10 +21,10 @@
     <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mustaddon/StateMachine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/StateMachine</RepositoryUrl>
-	<RepositoryType>git</RepositoryType>
-	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <NeutralLanguage />
-	<PackageReleaseNotes></PackageReleaseNotes>
+	  <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">

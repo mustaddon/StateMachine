@@ -1,6 +1,7 @@
 ﻿using RandomSolutions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleApp
 {
@@ -32,7 +33,7 @@ namespace ConsoleApp
                     .OnExit(_consoleWrite)
                 .Build();
 
-            foreach (var e in new[] { Event.E1, Event.E2, Event.E1, Event.E3, Event.E1 })
+            foreach (var e in new[] { Event.E1, Event.E2, Event.E1, Event.E3 })
             {
                 Console.WriteLine($"{fsm.Current}: {string.Join(", ", fsm.GetEvents())}");
                 Console.WriteLine($"Result: {fsm.Trigger(e)}\n");

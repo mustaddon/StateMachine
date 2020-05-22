@@ -8,6 +8,8 @@ namespace RandomSolutions
     {
         TState Current { get; }
 
+        IEnumerable<TState> GetStates(params object[] data);
+
         IEnumerable<TEvent> GetEvents(params object[] data);
 
         object Trigger(TEvent e, params object[] data);

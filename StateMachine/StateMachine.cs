@@ -27,6 +27,18 @@ namespace RandomSolutions
                 .Select(x => x.Key);
         }
 
+        public IEnumerable<TState> GetStates(params object[] data)
+        {
+            return _model.States
+                .Where(x => x.Value.Enable?.Invoke(new FsmEnterArgs<TState, TEvent>
+                {
+                    Fsm = this,
+                    PrevState = Current,
+                    Data = data,
+                }) != false)
+                .Select(x => x.Key);
+        }
+
         public object Trigger(TEvent e, params object[] data)
         {
             var args = new FsmTriggerArgs<TState, TEvent>
@@ -106,7 +118,7 @@ namespace RandomSolutions
 
             return true;
         }
-        
+
 
         public void ResetTo(TState state)
         {
