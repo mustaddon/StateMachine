@@ -7,11 +7,13 @@ namespace RandomSolutions
     public class FsmModel<TState, TEvent>
     {
         public TState Start { get; set; }
-        public Action<FsmEnterArgs<TState, TEvent>> OnJump { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnTrigger { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnFire { get; set; }
-        public Action<FsmErrorArgs<TState, TEvent>> OnError { get; set; }
+        public Action<FsmExitArgs<TState, TEvent>> OnExit { get; set; }
+        public Action<FsmEnterArgs<TState, TEvent>> OnEnter { get; set; }
+        public Action<FsmEnterArgs<TState, TEvent>> OnJump { get; set; }
         public Action<FsmResetArgs<TState, TEvent>> OnReset { get; set; }
+        public Action<FsmErrorArgs<TState, TEvent>> OnError { get; set; }
 
         public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; } 
             = new Dictionary<TState, FsmStateModel<TState, TEvent>>();

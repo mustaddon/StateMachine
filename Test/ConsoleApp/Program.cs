@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
@@ -41,8 +42,6 @@ namespace ConsoleApp
 
             fsm.Reset();
         }
-
-
 
         static void _consoleWrite(FsmEnterArgs<State, Event> x)
             => Console.WriteLine($"Enter state {x.Fsm.Current} from {x.PrevState}");

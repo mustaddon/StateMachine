@@ -21,6 +21,18 @@ namespace RandomSolutions
             return this;
         }
 
+        public FsmBuilder<TState, TEvent> OnExit(Action<FsmExitArgs<TState, TEvent>> action)
+        {
+            _model.OnExit = action;
+            return this;
+        }
+
+        public FsmBuilder<TState, TEvent> OnEnter(Action<FsmEnterArgs<TState, TEvent>> action)
+        {
+            _model.OnEnter = action;
+            return this;
+        }
+
         public FsmBuilder<TState, TEvent> OnJump(Action<FsmEnterArgs<TState, TEvent>> action)
         {
             _model.OnJump = action;

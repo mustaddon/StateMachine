@@ -90,31 +90,37 @@ namespace RandomSolutions
 
             var nextModel = _model.States[next];
 
-            var args = new FsmEnterArgs<TState, TEvent>
+            var enterArgs = new FsmEnterArgs<TState, TEvent>
             {
                 Fsm = this,
                 PrevState = Current,
                 Data = data,
             };
 
-            if (nextModel.Enable?.Invoke(args) == false)
+            if (nextModel.Enable?.Invoke(enterArgs) == false)
             {
                 _model.OnError?.Invoke(_getErrorArgs(data, _stateNextDisabled, next));
                 return false;
             }
 
-            _model.States[Current].OnExit?.Invoke(new FsmExitArgs<TState, TEvent>
+            var exitArgs = new FsmExitArgs<TState, TEvent>
             {
                 Fsm = this,
                 NextState = next,
                 Data = data,
-            });
+            };
+
+            _model.OnExit?.Invoke(exitArgs);
+
+            _model.States[Current].OnExit?.Invoke(exitArgs);
 
             Current = next;
 
-            _model.OnJump?.Invoke(args);
+            _model.OnEnter?.Invoke(enterArgs);
 
-            nextModel.OnEnter?.Invoke(args);
+            nextModel.OnEnter?.Invoke(enterArgs);
+
+            _model.OnJump?.Invoke(enterArgs);
 
             return true;
         }
@@ -145,13 +151,12 @@ namespace RandomSolutions
             };
         }
 
-        FsmModel<TState, TEvent> _model;
+        readonly FsmModel<TState, TEvent> _model;
 
         const string _stateNextDisabled = "Next state '{0}' disabled";
         const string _stateNextNotFound = "Next state '{0}' not found";
         const string _eventDisabled = "Event '{0}' disabled";
         const string _eventNotFound = "Event '{0}' not found";
-
     }
 
 }

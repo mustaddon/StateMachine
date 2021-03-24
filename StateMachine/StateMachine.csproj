@@ -1,14 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net35;net40;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net40;net45</TargetFrameworks>
     <AssemblyName>RandomSolutions.StateMachine</AssemblyName>
     <RootNamespace>RandomSolutions</RootNamespace>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
-	  <AssemblyVersion>1.0.2</AssemblyVersion>
-    <FileVersion>1.0.2</FileVersion>
-    <Version>1.0.2</Version>
+    
+	  <AssemblyVersion>1.0.3</AssemblyVersion>
+    <FileVersion>1.0.3</FileVersion>
+    <Version>1.0.3</Version>
+    
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2020</Copyright>
@@ -18,13 +20,13 @@
     <Description>Finite-state machine (FSM) pattern implementation</Description>
     <PackageTags>statemachine finitestatemachine fsm</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/mustaddon/StateMachine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/StateMachine</RepositoryUrl>
-	  <RepositoryType>git</RepositoryType>
-	  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <NeutralLanguage />
-	  <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
