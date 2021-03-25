@@ -77,6 +77,14 @@ namespace RandomSolutions
                     result = done;
             }
 
+            _model.OnComplete?.Invoke(new FsmCompleteArgs<TState, TEvent>
+            {
+                Fsm = this,
+                Event = e,
+                Data = data,
+                Result = result,
+            });
+
             return result;
         }
 

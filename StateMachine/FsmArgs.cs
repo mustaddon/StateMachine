@@ -19,6 +19,11 @@ namespace RandomSolutions
         public TEvent Event { get; internal set; }
     }
 
+    public class FsmCompleteArgs<TState, TEvent> : FsmTriggerArgs<TState, TEvent>
+    {
+        public object Result { get; internal set; }
+    }
+
     public class FsmExitArgs<TState, TEvent> : FsmDataArgs<TState, TEvent>
     {
         public TState NextState { get; internal set; }

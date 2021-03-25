@@ -51,6 +51,12 @@ namespace RandomSolutions
             return this;
         }
 
+        public FsmBuilder<TState, TEvent> OnComplete(Action<FsmCompleteArgs<TState, TEvent>> action)
+        {
+            _model.OnComplete = action;
+            return this;
+        }
+
         public FsmBuilder<TState, TEvent> OnError(Action<FsmErrorArgs<TState, TEvent>> action)
         {
             _model.OnError = action;

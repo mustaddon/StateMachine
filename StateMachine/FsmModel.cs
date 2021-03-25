@@ -9,6 +9,7 @@ namespace RandomSolutions
         public TState Start { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnTrigger { get; set; }
         public Action<FsmTriggerArgs<TState, TEvent>> OnFire { get; set; }
+        public Action<FsmCompleteArgs<TState, TEvent>> OnComplete { get; set; }
         public Action<FsmExitArgs<TState, TEvent>> OnExit { get; set; }
         public Action<FsmEnterArgs<TState, TEvent>> OnEnter { get; set; }
         public Action<FsmEnterArgs<TState, TEvent>> OnJump { get; set; }
