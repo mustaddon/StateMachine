@@ -9,19 +9,14 @@ namespace RandomSolutions
         public IStateMachine<TState, TEvent> Fsm { get; internal set; }
     }
 
+    public class FsmResetArgs<TState, TEvent> : FsmArgs<TState, TEvent>
+    {
+        public TState PrevState { get; internal set; }
+    }
+
     public class FsmDataArgs<TState, TEvent> : FsmArgs<TState, TEvent>
     {
         public object[] Data { get; internal set; }
-    }
-
-    public class FsmTriggerArgs<TState, TEvent> : FsmDataArgs<TState, TEvent>
-    {
-        public TEvent Event { get; internal set; }
-    }
-
-    public class FsmCompleteArgs<TState, TEvent> : FsmTriggerArgs<TState, TEvent>
-    {
-        public object Result { get; internal set; }
     }
 
     public class FsmExitArgs<TState, TEvent> : FsmDataArgs<TState, TEvent>
@@ -39,8 +34,13 @@ namespace RandomSolutions
         public string Message { get; internal set; }
     }
 
-    public class FsmResetArgs<TState, TEvent> : FsmArgs<TState, TEvent>
+    public class FsmTriggerArgs<TState, TEvent> : FsmDataArgs<TState, TEvent>
     {
-        public TState PrevState { get; internal set; }
+        public TEvent Event { get; internal set; }
+    }
+
+    public class FsmCompleteArgs<TState, TEvent> : FsmTriggerArgs<TState, TEvent>
+    {
+        public object Result { get; internal set; }
     }
 }

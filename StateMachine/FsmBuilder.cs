@@ -1,65 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RandomSolutions
 {
     public class FsmBuilder<TState, TEvent>
     {
-        public FsmBuilder(TState start)
-            : this(new FsmModel<TState, TEvent> { Start = start }) { }
+        public FsmBuilder(TState start) : this(new FsmModel<TState, TEvent> { Start = start })
+        { }
 
         public FsmBuilder(FsmModel<TState, TEvent> model)
         {
-            _model = model;
+            Model = model;
         }
+
+        readonly FsmModel<TState, TEvent> Model;
 
         public FsmBuilder<TState, TEvent> OnReset(Action<FsmResetArgs<TState, TEvent>> action)
         {
-            _model.OnReset = action;
+            Model.OnReset = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnExit(Action<FsmExitArgs<TState, TEvent>> action)
         {
-            _model.OnExit = action;
+            Model.OnExit = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnEnter(Action<FsmEnterArgs<TState, TEvent>> action)
         {
-            _model.OnEnter = action;
+            Model.OnEnter = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnJump(Action<FsmEnterArgs<TState, TEvent>> action)
         {
-            _model.OnJump = action;
+            Model.OnJump = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnTrigger(Action<FsmTriggerArgs<TState, TEvent>> action)
         {
-            _model.OnTrigger = action;
+            Model.OnTrigger = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnFire(Action<FsmTriggerArgs<TState, TEvent>> action)
         {
-            _model.OnFire = action;
+            Model.OnFire = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnComplete(Action<FsmCompleteArgs<TState, TEvent>> action)
         {
-            _model.OnComplete = action;
+            Model.OnComplete = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnError(Action<FsmErrorArgs<TState, TEvent>> action)
         {
-            _model.OnError = action;
+            Model.OnError = action;
             return this;
         }
 
@@ -67,10 +66,10 @@ namespace RandomSolutions
         {
             var stateModel = new FsmStateModel<TState, TEvent>();
 
-            if (_model.States.ContainsKey(state))
-                _model.States[state] = stateModel;
+            if (Model.States.ContainsKey(state))
+                Model.States[state] = stateModel;
             else
-                _model.States.Add(state, stateModel);
+                Model.States.Add(state, stateModel);
 
             return new FsmStateConfig<TState, TEvent>
             {
@@ -79,19 +78,14 @@ namespace RandomSolutions
             };
         }
 
-        public FsmModel<TState, TEvent> BuildModel()
+        public IStateMachine<TState, TEvent> Build()
         {
-            if (!_model.States.ContainsKey(_model.Start))
+            if (!Model.States.ContainsKey(Model.Start))
                 throw new Exception(_startNotContains);
 
-            return _model;
+            return new StateMachine<TState, TEvent>(Model);
         }
 
-        public virtual IStateMachine<TState, TEvent> Build()
-            => new StateMachine<TState, TEvent>(BuildModel());
-
-
-        FsmModel<TState, TEvent> _model;
         const string _startNotContains = "States collection is not contains start point";
     }
 }
