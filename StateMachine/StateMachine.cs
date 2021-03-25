@@ -29,13 +29,15 @@ namespace RandomSolutions
 
         public IEnumerable<TState> GetStates(params object[] data)
         {
+            var args = new FsmEnterArgs<TState, TEvent>
+            {
+                Fsm = this,
+                PrevState = Current,
+                Data = data,
+            };
+
             return _model.States
-                .Where(x => x.Value.Enable?.Invoke(new FsmEnterArgs<TState, TEvent>
-                {
-                    Fsm = this,
-                    PrevState = Current,
-                    Data = data,
-                }) != false)
+                .Where(x => x.Value.Enable?.Invoke(args) != false)
                 .Select(x => x.Key);
         }
 
