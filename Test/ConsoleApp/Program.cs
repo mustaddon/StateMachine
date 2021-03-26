@@ -23,7 +23,10 @@ namespace ConsoleApp
                     .OnEnter(_consoleWrite)
                     .OnExit(_consoleWrite)
                     .On(Event.E1).Execute(x => { Console.WriteLine($"Execute {x.Fsm.Current}>{x.Event}"); return "some data"; })
-                    .On(Event.E2).JumpTo(State.S2)
+                    .On(Event.E2).Enable(async x => {
+                        await Task.Delay(2000);
+                        return true;
+                    }).JumpTo(State.S2)
                     .On(Event.E3).JumpTo(State.S3)
                 .State(State.S2)
                     .OnEnter(_consoleWrite)

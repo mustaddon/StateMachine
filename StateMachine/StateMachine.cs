@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RandomSolutions
 {
@@ -15,19 +16,12 @@ namespace RandomSolutions
 
         public TState Current { get; private set; }
 
-        public IEnumerable<TEvent> GetEvents(params object[] data)
+        public IEnumerable<TState> GetStates(params object[] data)
         {
-            return _model.States[Current].Events
-                .Where(x => x.Value.Enable?.Invoke(new FsmTriggerArgs<TState, TEvent>
-                {
-                    Fsm = this,
-                    Event = x.Key,
-                    Data = data,
-                }) != false)
-                .Select(x => x.Key);
+            return GetStatesAsync(data).Result;
         }
 
-        public IEnumerable<TState> GetStates(params object[] data)
+        public async Task<IEnumerable<TState>> GetStatesAsync(params object[] data)
         {
             var args = new FsmEnterArgs<TState, TEvent>
             {
@@ -36,12 +30,50 @@ namespace RandomSolutions
                 Data = data,
             };
 
-            return _model.States
-                .Where(x => x.Value.Enable?.Invoke(args) != false)
-                .Select(x => x.Key);
+            var stateTasks = _model.States
+                .Select(x => new { State = x.Key, Task = x.Value.Enable?.Invoke(args) })
+                .ToList();
+
+            await Task.WhenAll(stateTasks.Select(x => x.Task).Where(x => x != null));
+
+            return stateTasks
+                .Where(x => x.Task?.Result != false)
+                .Select(x => x.State);
+        }
+
+        public IEnumerable<TEvent> GetEvents(params object[] data)
+        {
+            return GetEventsAsync(data).Result;
+        }
+
+        public async Task<IEnumerable<TEvent>> GetEventsAsync(params object[] data)
+        {
+            var eventTasks = _model.States[Current].Events
+                .Select(x => new
+                {
+                    Event = x.Key,
+                    Task = x.Value.Enable?.Invoke(new FsmTriggerArgs<TState, TEvent>
+                    {
+                        Fsm = this,
+                        Event = x.Key,
+                        Data = data,
+                    })
+                })
+                .ToList();
+
+            await Task.WhenAll(eventTasks.Select(x => x.Task).Where(x => x != null));
+
+            return eventTasks
+                .Where(x => x.Task?.Result != false)
+                .Select(x => x.Event);
         }
 
         public object Trigger(TEvent e, params object[] data)
+        {
+            return TriggerAsync(e, data).Result;
+        }
+
+        public async Task<object> TriggerAsync(TEvent e, params object[] data)
         {
             var args = new FsmTriggerArgs<TState, TEvent>
             {
@@ -50,51 +82,61 @@ namespace RandomSolutions
                 Data = data,
             };
 
-            _model.OnTrigger?.Invoke(args);
+            if (_model.OnTrigger != null)
+                await _model.OnTrigger(args);
 
             var stateModel = _model.States[Current];
 
             if (!stateModel.Events.ContainsKey(e))
             {
-                _model.OnError?.Invoke(_getErrorArgs(data, _eventNotFound, e));
+                await _onError(_getErrorArgs(data, _eventNotFound, e));
                 return null;
             }
 
             var eventModel = stateModel.Events[e];
 
-            if (eventModel.Enable?.Invoke(args) == false)
+            if (eventModel.Enable != null && !await eventModel.Enable(args))
             {
-                _model.OnError?.Invoke(_getErrorArgs(data, _eventDisabled, e));
+                await _onError(_getErrorArgs(data, _eventDisabled, e));
                 return null;
             }
 
-            _model.OnFire?.Invoke(args);
+            if (_model.OnFire != null)
+                await _model.OnFire(args);
 
-            var result = eventModel.Execute?.Invoke(args);
+            var result = eventModel.Execute == null ? null
+                : await eventModel.Execute(args);
 
             if (eventModel.JumpTo != null)
             {
-                var done = JumpTo(eventModel.JumpTo.Invoke(args), data);
+                var next = await eventModel.JumpTo(args);
+                var done = await JumpToAsync(next, data);
+
                 if (eventModel.Execute == null)
                     result = done;
             }
 
-            _model.OnComplete?.Invoke(new FsmCompleteArgs<TState, TEvent>
-            {
-                Fsm = this,
-                Event = e,
-                Data = data,
-                Result = result,
-            });
+            if (_model.OnComplete != null)
+                await _model.OnComplete(new FsmCompleteArgs<TState, TEvent>
+                {
+                    Fsm = this,
+                    Event = e,
+                    Data = data,
+                    Result = result,
+                });
 
             return result;
         }
-
         public bool JumpTo(TState next, params object[] data)
+        {
+            return JumpToAsync(next, data).Result;
+        }
+
+        public async Task<bool> JumpToAsync(TState next, params object[] data)
         {
             if (!_model.States.ContainsKey(next))
             {
-                _model.OnError?.Invoke(_getErrorArgs(data, _stateNextNotFound, next));
+                await _onError(_getErrorArgs(data, _stateNextNotFound, next));
                 return false;
             }
 
@@ -107,9 +149,9 @@ namespace RandomSolutions
                 Data = data,
             };
 
-            if (nextModel.Enable?.Invoke(enterArgs) == false)
+            if (nextModel.Enable != null && await nextModel.Enable(enterArgs) == false)
             {
-                _model.OnError?.Invoke(_getErrorArgs(data, _stateNextDisabled, next));
+                await _onError(_getErrorArgs(data, _stateNextDisabled, next));
                 return false;
             }
 
@@ -120,23 +162,36 @@ namespace RandomSolutions
                 Data = data,
             };
 
-            _model.OnExit?.Invoke(exitArgs);
+            if (_model.OnExit != null)
+                await _model.OnExit(exitArgs);
 
-            _model.States[Current].OnExit?.Invoke(exitArgs);
+            if (_model.States[Current].OnExit != null)
+                await _model.States[Current].OnExit(exitArgs);
 
-            Current = next;
+            lock (_locker)
+                Current = next;
 
-            _model.OnEnter?.Invoke(enterArgs);
+            if (_model.OnEnter != null)
+                await _model.OnEnter(enterArgs);
 
-            nextModel.OnEnter?.Invoke(enterArgs);
+            if (nextModel.OnEnter != null)
+                await nextModel.OnEnter(enterArgs);
 
-            _model.OnJump?.Invoke(enterArgs);
+            if (_model.OnJump != null)
+                await _model.OnJump(enterArgs);
 
             return true;
         }
 
+        public void Reset() => ResetTo(_model.Start);
+        public Task ResetAsync() => ResetToAsync(_model.Start);
 
         public void ResetTo(TState state)
+        {
+            ResetToAsync(state).Wait();
+        }
+
+        public async Task ResetToAsync(TState state)
         {
             var args = new FsmResetArgs<TState, TEvent>
             {
@@ -145,11 +200,16 @@ namespace RandomSolutions
             };
 
             Current = state;
-            _model.OnReset?.Invoke(args);
+
+            if (_model.OnReset != null)
+                await _model.OnReset(args);
         }
 
-        public void Reset() => ResetTo(_model.Start);
-
+        async Task _onError(FsmErrorArgs<TState, TEvent> args)
+        {
+            if (_model.OnError != null)
+                await _model.OnError(args);
+        }
 
         FsmErrorArgs<TState, TEvent> _getErrorArgs(object[] data, string message, params object[] formatArgs)
         {
@@ -162,6 +222,7 @@ namespace RandomSolutions
         }
 
         readonly FsmModel<TState, TEvent> _model;
+        object _locker = new object();
 
         const string _stateNextDisabled = "Next state '{0}' disabled";
         const string _stateNextNotFound = "Next state '{0}' not found";

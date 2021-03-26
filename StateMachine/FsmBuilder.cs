@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace RandomSolutions
 {
@@ -16,11 +17,21 @@ namespace RandomSolutions
 
         public FsmBuilder<TState, TEvent> OnReset(Action<FsmResetArgs<TState, TEvent>> action)
         {
+            return OnReset(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnReset(Func<FsmResetArgs<TState, TEvent>, Task> action)
+        {
             Model.OnReset = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnExit(Action<FsmExitArgs<TState, TEvent>> action)
+        {
+            return OnExit(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnExit(Func<FsmExitArgs<TState, TEvent>, Task> action)
         {
             Model.OnExit = action;
             return this;
@@ -28,11 +39,21 @@ namespace RandomSolutions
 
         public FsmBuilder<TState, TEvent> OnEnter(Action<FsmEnterArgs<TState, TEvent>> action)
         {
+            return OnEnter(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnEnter(Func<FsmEnterArgs<TState, TEvent>, Task> action)
+        {
             Model.OnEnter = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnJump(Action<FsmEnterArgs<TState, TEvent>> action)
+        {
+            return OnJump(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnJump(Func<FsmEnterArgs<TState, TEvent>, Task> action)
         {
             Model.OnJump = action;
             return this;
@@ -40,11 +61,21 @@ namespace RandomSolutions
 
         public FsmBuilder<TState, TEvent> OnTrigger(Action<FsmTriggerArgs<TState, TEvent>> action)
         {
+            return OnTrigger(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnTrigger(Func<FsmTriggerArgs<TState, TEvent>, Task> action)
+        {
             Model.OnTrigger = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnFire(Action<FsmTriggerArgs<TState, TEvent>> action)
+        {
+            return OnFire(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnFire(Func<FsmTriggerArgs<TState, TEvent>, Task> action)
         {
             Model.OnFire = action;
             return this;
@@ -52,11 +83,21 @@ namespace RandomSolutions
 
         public FsmBuilder<TState, TEvent> OnComplete(Action<FsmCompleteArgs<TState, TEvent>> action)
         {
+            return OnComplete(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnComplete(Func<FsmCompleteArgs<TState, TEvent>, Task> action)
+        {
             Model.OnComplete = action;
             return this;
         }
 
         public FsmBuilder<TState, TEvent> OnError(Action<FsmErrorArgs<TState, TEvent>> action)
+        {
+            return OnError(x => { action(x); return FrameworkExt.CompletedTask; });
+        }
+
+        public FsmBuilder<TState, TEvent> OnError(Func<FsmErrorArgs<TState, TEvent>, Task> action)
         {
             Model.OnError = action;
             return this;
@@ -88,4 +129,5 @@ namespace RandomSolutions
 
         const string _startNotContains = "States collection is not contains start point";
     }
+
 }
