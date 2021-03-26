@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RandomSolutions
@@ -17,7 +16,7 @@ namespace RandomSolutions
         public Func<FsmResetArgs<TState, TEvent>, Task> OnReset { get; set; }
         public Func<FsmErrorArgs<TState, TEvent>, Task> OnError { get; set; }
 
-        public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; } 
+        public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; }
             = new Dictionary<TState, FsmStateModel<TState, TEvent>>();
     }
 
@@ -27,7 +26,7 @@ namespace RandomSolutions
         public Func<FsmEnterArgs<TState, TEvent>, Task> OnEnter { get; set; }
         public Func<FsmExitArgs<TState, TEvent>, Task> OnExit { get; set; }
 
-        public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; } 
+        public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; }
             = new Dictionary<TEvent, FsmEventModel<TState, TEvent>>();
     }
 
