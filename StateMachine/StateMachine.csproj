@@ -9,7 +9,7 @@
 
 	  <AssemblyVersion>1.1.0</AssemblyVersion>
     <FileVersion>1.1.0</FileVersion>
-    <Version>1.1.0-beta</Version>
+    <Version>1.1.0</Version>
     
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
@@ -26,7 +26,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <NeutralLanguage />
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>added async methods</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
