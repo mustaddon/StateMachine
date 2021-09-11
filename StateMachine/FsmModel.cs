@@ -18,6 +18,9 @@ namespace RandomSolutions
 
         public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; }
             = new Dictionary<TState, FsmStateModel<TState, TEvent>>();
+
+        public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; }
+            = new Dictionary<TEvent, FsmEventModel<TState, TEvent>>();
     }
 
     public class FsmStateModel<TState, TEvent>

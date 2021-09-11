@@ -75,7 +75,7 @@ namespace RandomSolutions
 
         internal FsmStateConfig<TState, TEvent> Parent;
 
-        public FsmEventConfig<TState, TEvent> On(TEvent e) => Parent.On(e);
+        public FsmEventConfig<TState, TEvent> On(TEvent e) => Parent?.On(e) ?? Root?.On(e);
 
         public FsmEventConfig<TState, TEvent> Execute(Func<FsmTriggerArgs<TState, TEvent>, object> fn)
         {

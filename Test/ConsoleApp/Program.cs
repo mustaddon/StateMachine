@@ -7,7 +7,7 @@ namespace ConsoleApp
     class Program
     {
         enum State { S1, S2, S3 }
-        enum Event { E1, E2, E3 }
+        enum Event { E0, E1, E2, E3 }
 
         static IStateMachine<State, Event> CreateFsm()
         {
@@ -18,6 +18,7 @@ namespace ConsoleApp
                 .OnError(x => Console.WriteLine($"On error {x.Fsm.Current}: {x.Message}"))
                 .OnEnter(x => Console.WriteLine($"Enter state {x.Fsm.Current} from {x.PrevState}"))
                 .OnExit(x => Console.WriteLine($"Exit state {x.Fsm.Current} to {x.NextState}"))
+                .On(Event.E0).Execute(x => "shared to all states")
 
                 .State(State.S1)
                     .On(Event.E1)
@@ -40,17 +41,7 @@ namespace ConsoleApp
         static async Task Main(string[] args)
         {
             var fsm = CreateFsm();
-            var events = new[] { Event.E1, Event.E2, Event.E1, Event.E3 };
-
-            foreach (var e in events)
-            {
-                Console.WriteLine($"{fsm.Current}: {string.Join(", ", fsm.GetEvents())}");
-                Console.WriteLine($"Result: {fsm.Trigger(e)}\n");
-            }
-
-            fsm.Reset();
-
-            Console.WriteLine($"\n\n=== ASYNC ===\n");
+            var events = new[] { Event.E1, Event.E2, Event.E0, Event.E1, Event.E3 };
 
             foreach (var e in events)
             {

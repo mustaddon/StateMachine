@@ -46,7 +46,11 @@ namespace RandomSolutions
 
         public async Task<IEnumerable<TEvent>> GetEventsAsync(params object[] data)
         {
-            var eventTasks = _model.States[Current].Events
+            var stateModel = _model.States[Current];
+            
+            var eventTasks = _model.Events
+                .Where(x => !stateModel.Events.ContainsKey(x.Key))
+                .Concat(stateModel.Events)
                 .Select(x => new
                 {
                     Event = x.Key,
@@ -84,14 +88,13 @@ namespace RandomSolutions
                 await _model.OnTrigger(args);
 
             var stateModel = _model.States[Current];
+            FsmEventModel<TState, TEvent> eventModel;
 
-            if (!stateModel.Events.ContainsKey(e))
+            if (!stateModel.Events.TryGetValue(e, out eventModel) && !_model.Events.TryGetValue(e, out eventModel))
             {
                 await _onError(_getErrorArgs(data, _eventNotFound, e));
                 return null;
             }
-
-            var eventModel = stateModel.Events[e];
 
             if (eventModel.Enable != null && !await eventModel.Enable(args))
             {

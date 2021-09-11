@@ -103,6 +103,22 @@ namespace RandomSolutions
             return this;
         }
 
+        public FsmEventConfig<TState, TEvent> On(TEvent e)
+        {
+            var eventModel = new FsmEventModel<TState, TEvent>();
+
+            if (Model.Events.ContainsKey(e))
+                Model.Events[e] = eventModel;
+            else
+                Model.Events.Add(e, eventModel);
+
+            return new FsmEventConfig<TState, TEvent>
+            {
+                Model = eventModel,
+                Root = this,
+            };
+        }
+
         public FsmStateConfig<TState, TEvent> State(TState state)
         {
             var stateModel = new FsmStateModel<TState, TEvent>();
