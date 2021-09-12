@@ -32,7 +32,7 @@ namespace RandomSolutions
                 .Select(x => new { State = x.Key, Task = x.Value.Enable?.Invoke(args) })
                 .ToList();
 
-            await Task.WhenAll(stateTasks.Select(x => x.Task).Where(x => x != null));
+            await Task.WhenAll(stateTasks.Select(x => x.Task).Where(x => x != null)).ConfigureAwait(false);
 
             return stateTasks
                 .Where(x => x.Task?.Result != false)
@@ -63,7 +63,7 @@ namespace RandomSolutions
                 })
                 .ToList();
 
-            await Task.WhenAll(eventTasks.Select(x => x.Task).Where(x => x != null));
+            await Task.WhenAll(eventTasks.Select(x => x.Task).Where(x => x != null)).ConfigureAwait(false);
 
             return eventTasks
                 .Where(x => x.Task?.Result != false)
@@ -200,7 +200,8 @@ namespace RandomSolutions
                 PrevState = Current,
             };
 
-            Current = state;
+            lock (_locker)
+                Current = state;
 
             if (_model.OnReset != null)
                 await _model.OnReset(args);
