@@ -9,6 +9,20 @@ namespace ConsoleApp
         enum State { S1, S2, S3 }
         enum Event { E0, E1, E2, E3 }
 
+        static async Task Main(string[] args)
+        {
+            var fsm = CreateFsm();
+            var events = new[] { Event.E1, Event.E2, Event.E0, Event.E1, Event.E3 };
+
+            foreach (var e in events)
+            {
+                Console.WriteLine($"{fsm.Current}: {string.Join(", ", await fsm.GetEventsAsync())}");
+                Console.WriteLine($"Result: {await fsm.TriggerAsync(e)}\n");
+            }
+
+            await fsm.ResetAsync();
+        }
+
         static IStateMachine<State, Event> CreateFsm()
         {
             return new FsmBuilder<State, Event>(State.S1)
@@ -36,20 +50,6 @@ namespace ConsoleApp
                 .State(State.S3)
                     .OnEnter(x => Console.WriteLine($"Final state"))
                 .Build();
-        }
-
-        static async Task Main(string[] args)
-        {
-            var fsm = CreateFsm();
-            var events = new[] { Event.E1, Event.E2, Event.E0, Event.E1, Event.E3 };
-
-            foreach (var e in events)
-            {
-                Console.WriteLine($"{fsm.Current}: {string.Join(", ", await fsm.GetEventsAsync())}");
-                Console.WriteLine($"Result: {await fsm.TriggerAsync(e)}\n");
-            }
-
-            await fsm.ResetAsync();
         }
     }
 }

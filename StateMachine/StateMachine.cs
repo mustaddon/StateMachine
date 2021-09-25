@@ -85,33 +85,33 @@ namespace RandomSolutions
             };
 
             if (_model.OnTrigger != null)
-                await _model.OnTrigger(args);
+                await _model.OnTrigger(args).ConfigureAwait(false);
 
             var stateModel = _model.States[Current];
             FsmEventModel<TState, TEvent> eventModel;
 
             if (!stateModel.Events.TryGetValue(e, out eventModel) && !_model.Events.TryGetValue(e, out eventModel))
             {
-                await _onError(_getErrorArgs(data, _eventNotFound, e));
+                await _onError(_getErrorArgs(data, _eventNotFound, e)).ConfigureAwait(false);
                 return null;
             }
 
-            if (eventModel.Enable != null && !await eventModel.Enable(args))
+            if (eventModel.Enable != null && !await eventModel.Enable(args).ConfigureAwait(false))
             {
-                await _onError(_getErrorArgs(data, _eventDisabled, e));
+                await _onError(_getErrorArgs(data, _eventDisabled, e)).ConfigureAwait(false);
                 return null;
             }
 
             if (_model.OnFire != null)
-                await _model.OnFire(args);
+                await _model.OnFire(args).ConfigureAwait(false);
 
             var result = eventModel.Execute == null ? null
-                : await eventModel.Execute(args);
+                : await eventModel.Execute(args).ConfigureAwait(false);
 
             if (eventModel.JumpTo != null)
             {
-                var next = await eventModel.JumpTo(args);
-                var done = await JumpToAsync(next, data);
+                var next = await eventModel.JumpTo(args).ConfigureAwait(false);
+                var done = await JumpToAsync(next, data).ConfigureAwait(false);
 
                 if (eventModel.Execute == null)
                     result = done;
@@ -124,7 +124,7 @@ namespace RandomSolutions
                     Event = e,
                     Data = data,
                     Result = result,
-                });
+                }).ConfigureAwait(false);
 
             return result;
         }
@@ -137,7 +137,7 @@ namespace RandomSolutions
         {
             if (!_model.States.ContainsKey(next))
             {
-                await _onError(_getErrorArgs(data, _stateNextNotFound, next));
+                await _onError(_getErrorArgs(data, _stateNextNotFound, next)).ConfigureAwait(false);
                 return false;
             }
 
@@ -150,9 +150,9 @@ namespace RandomSolutions
                 Data = data,
             };
 
-            if (nextModel.Enable != null && await nextModel.Enable(enterArgs) == false)
+            if (nextModel.Enable != null && !await nextModel.Enable(enterArgs).ConfigureAwait(false))
             {
-                await _onError(_getErrorArgs(data, _stateNextDisabled, next));
+                await _onError(_getErrorArgs(data, _stateNextDisabled, next)).ConfigureAwait(false);
                 return false;
             }
 
@@ -164,22 +164,22 @@ namespace RandomSolutions
             };
 
             if (_model.OnExit != null)
-                await _model.OnExit(exitArgs);
+                await _model.OnExit(exitArgs).ConfigureAwait(false);
 
             if (_model.States[Current].OnExit != null)
-                await _model.States[Current].OnExit(exitArgs);
+                await _model.States[Current].OnExit(exitArgs).ConfigureAwait(false);
 
             lock (_locker)
                 Current = next;
 
             if (_model.OnEnter != null)
-                await _model.OnEnter(enterArgs);
+                await _model.OnEnter(enterArgs).ConfigureAwait(false);
 
             if (nextModel.OnEnter != null)
-                await nextModel.OnEnter(enterArgs);
+                await nextModel.OnEnter(enterArgs).ConfigureAwait(false);
 
             if (_model.OnJump != null)
-                await _model.OnJump(enterArgs);
+                await _model.OnJump(enterArgs).ConfigureAwait(false);
 
             return true;
         }
@@ -204,13 +204,13 @@ namespace RandomSolutions
                 Current = state;
 
             if (_model.OnReset != null)
-                await _model.OnReset(args);
+                await _model.OnReset(args).ConfigureAwait(false);
         }
 
         async Task _onError(FsmErrorArgs<TState, TEvent> args)
         {
             if (_model.OnError != null)
-                await _model.OnError(args);
+                await _model.OnError(args).ConfigureAwait(false);
         }
 
         FsmErrorArgs<TState, TEvent> _getErrorArgs(object[] data, string message, params object[] formatArgs)
