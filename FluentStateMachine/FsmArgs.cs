@@ -1,8 +1,11 @@
-﻿namespace RandomSolutions
+﻿using System.Threading;
+
+namespace FluentStateMachine
 {
     public class FsmArgs<TState, TEvent>
     {
         public IStateMachine<TState, TEvent> Fsm { get; internal set; }
+        public CancellationToken CancellationToken { get; internal set; }
     }
 
     public class FsmResetArgs<TState, TEvent> : FsmArgs<TState, TEvent>
@@ -12,7 +15,7 @@
 
     public class FsmDataArgs<TState, TEvent> : FsmArgs<TState, TEvent>
     {
-        public object[] Data { get; internal set; }
+        public object Data { get; internal set; }
     }
 
     public class FsmExitArgs<TState, TEvent> : FsmDataArgs<TState, TEvent>

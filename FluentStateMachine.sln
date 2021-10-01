@@ -1,13 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2018
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StateMachine", "StateMachine\StateMachine.csproj", "{D6D3C3E9-73EF-48E9-9D82-017BA0123C24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentStateMachine", "FluentStateMachine\FluentStateMachine.csproj", "{D6D3C3E9-73EF-48E9-9D82-017BA0123C24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "Test\ConsoleApp\ConsoleApp.csproj", "{EA950F42-CB53-4119-8AB9-D9305AE8A32A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "Examples\ConsoleApp\ConsoleApp.csproj", "{EA950F42-CB53-4119-8AB9-D9305AE8A32A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{4C1BDDED-BF17-4F95-B295-4AC93351993A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{4C1BDDED-BF17-4F95-B295-4AC93351993A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{35BB4148-B10F-4F43-833D-8FD5169DDA63}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,6 @@
-﻿using RandomSolutions;
+﻿using FluentStateMachine;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleApp
@@ -11,21 +12,7 @@ namespace ConsoleApp
 
         static async Task Main(string[] args)
         {
-            var fsm = CreateFsm();
-            var events = new[] { Event.E1, Event.E2, Event.E0, Event.E1, Event.E3 };
-
-            foreach (var e in events)
-            {
-                Console.WriteLine($"{fsm.Current}: {string.Join(", ", await fsm.GetEventsAsync())}");
-                Console.WriteLine($"Result: {await fsm.TriggerAsync(e)}\n");
-            }
-
-            await fsm.ResetAsync();
-        }
-
-        static IStateMachine<State, Event> CreateFsm()
-        {
-            return new FsmBuilder<State, Event>(State.S1)
+            var fsm = new FsmBuilder<State, Event>(State.S1)
                 .OnJump(x => Console.WriteLine($"On jump to {x.Fsm.Current} from {x.PrevState}"))
                 .OnReset(x => Console.WriteLine($"On reset to {x.Fsm.Current} from {x.PrevState}"))
                 .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
@@ -42,6 +29,7 @@ namespace ConsoleApp
                             await Task.Delay(1000);
                             return "some data";
                         })
+
                     .On(Event.E2).JumpTo(State.S2)
                     .On(Event.E3).JumpTo(State.S3)
                 .State(State.S2)
@@ -50,6 +38,18 @@ namespace ConsoleApp
                 .State(State.S3)
                     .OnEnter(x => Console.WriteLine($"Final state"))
                 .Build();
+
+
+            var events = new[] { Event.E1, Event.E2, Event.E0, Event.E1, Event.E3 };
+
+            foreach (var e in events)
+            {
+                Console.WriteLine($"Current state: {fsm.Current}");
+                Console.WriteLine($"Available events: {string.Join(", ", fsm.GetEvents())}");
+                Console.WriteLine($"Result: {await fsm.TriggerAsync(e)}\n\n");
+            }
+
+            await fsm.ResetAsync();
         }
     }
 }

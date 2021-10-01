@@ -1,5 +1,5 @@
-# StateMachine [![NuGet version](https://badge.fury.io/nu/RandomSolutions.StateMachine.svg)](http://badge.fury.io/nu/RandomSolutions.StateMachine)
-Finite-state machine (FSM) pattern implementation
+# FluentStateMachine [![NuGet version](https://badge.fury.io/nu/FluentStateMachine.svg)](http://badge.fury.io/nu/FluentStateMachine)
+.NET Finite-state machine (FSM) with a fluent interface
 
 ## Example
 ```C#
@@ -30,4 +30,3 @@ fsm.Trigger(Event.E3);
 // Enter to final state
 ```
 
-[More details in the test console application...](Test/ConsoleApp/Program.cs)

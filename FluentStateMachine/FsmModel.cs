@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RandomSolutions
+namespace FluentStateMachine
 {
     public class FsmModel<TState, TEvent>
     {

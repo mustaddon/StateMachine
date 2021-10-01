@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RandomSolutions
+namespace FluentStateMachine
 {
     public class FsmException : Exception
     {
