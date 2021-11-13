@@ -17,7 +17,7 @@ namespace FluentStateMachine
 
         public TState Current { get; private set; }
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET6_0_OR_GREATER
         public async IAsyncEnumerable<TState> GetStatesAsync(object data = null,
             [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
         {

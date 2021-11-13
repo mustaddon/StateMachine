@@ -12,7 +12,7 @@ namespace FluentStateMachine
         Task<bool> JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default);
         Task ResetToAsync(TState state, CancellationToken cancellationToken = default);
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET6_0_OR_GREATER
         IAsyncEnumerable<TState> GetStatesAsync(object data = null, CancellationToken cancellationToken = default);
         IAsyncEnumerable<TEvent> GetEventsAsync(object data = null, CancellationToken cancellationToken = default);
 #else

@@ -7,7 +7,7 @@ namespace FluentStateMachine
     public static class FsmExtensions
     {
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET6_0_OR_GREATER
         private static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> items, CancellationToken cancellationToken = default)
         {
             var result = new List<T>();
