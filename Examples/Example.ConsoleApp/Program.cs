@@ -9,7 +9,7 @@ namespace ConsoleApp
         enum State { S1, S2, S3 }
         enum Event { E0, E1, E2, E3 }
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             var fsm = new FsmBuilder<State, Event>(State.S1)
                 .OnJump(x => Console.WriteLine($"On jump to {x.Fsm.Current} from {x.PrevState}"))
