@@ -1,15 +1,77 @@
-﻿using System.Threading;
+﻿using FluentStateMachine._internal;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using FluentStateMachine._internal;
 
 namespace FluentStateMachine;
 
-public partial class StateMachine<TState, TEvent>(FsmModel<TState, TEvent> model) : IStateMachine<TState, TEvent>
+public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 {
-    private readonly FsmModel<TState, TEvent> _model = model;
+    internal StateMachine(FsmModel<TState, TEvent> model)
+    {
+        _model = model;
+        Current = model.Start;
+    }
+
+    private readonly FsmModel<TState, TEvent> _model;
     private readonly object _locker = new();
 
-    public TState Current { get; private set; } = model.Start;
+    public TState Current { get; private set; }
+
+    public ICollection<TState> States => _model.States.Keys;
+
+    public ICollection<TEvent> Events { 
+        get {
+            var state = Current;
+
+            if (_events == null || !EqualityComparer<TState>.Default.Equals(state, _eventsState)) {
+                _events = new(() => new(_model.Events.Keys.Concat(_model.States[state].Events.Keys)));
+                _eventsState = state;
+            }
+
+            return _events.Value;
+        }
+    }
+
+    private Lazy<HashSet<TEvent>> _events;
+    private TState _eventsState;
+
+
+    public Task<bool> IsAvailableStateAsync(TState value, object data = null, CancellationToken cancellationToken = default)
+    {
+        if (!_model.States.TryGetValue(value, out var stateModel))
+            return Task.FromResult(false);
+
+        if (stateModel.Enable == null)
+            return Task.FromResult(true);
+
+        return stateModel.Enable?.Invoke(new FsmEnterArgs<TState, TEvent>
+        {
+            Fsm = this,
+            PrevState = Current,
+            Data = data,
+            CancellationToken = cancellationToken,
+        });
+    }
+
+    public Task<bool> IsAvailableEventAsync(TEvent value, object data = null, CancellationToken cancellationToken = default)
+    {
+        if (!_model.States[Current].Events.TryGetValue(value, out var eventModel)
+            && !_model.Events.TryGetValue(value, out eventModel))
+            return Task.FromResult(false);
+
+        if (eventModel.Enable == null)
+            return Task.FromResult(true);
+
+        return eventModel.Enable(new FsmTriggerArgs<TState, TEvent>
+        {
+            Fsm = this,
+            Data = data,
+            CancellationToken = cancellationToken,
+        });
+    }
 
 
     public async Task<object> TriggerAsync(TEvent e, object data = null, CancellationToken cancellationToken = default)

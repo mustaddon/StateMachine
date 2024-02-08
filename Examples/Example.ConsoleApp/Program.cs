@@ -36,15 +36,15 @@ namespace ConsoleApp
                     .On(Event.E1).JumpTo(async x => { await Task.Delay(1000); return State.S1; })
                 .State(State.S3)
                     .OnEnter(x => Console.WriteLine($"Final state"))
+                    .On(Event.E0).Execute(x => "overridden shared event !!!")
                 .Build();
 
-
-            var events = new[] { Event.E1, Event.E2, Event.E0, Event.E1, Event.E3 };
+            var events = new[] { Event.E1, Event.E2, Event.E0, Event.E1, Event.E3, Event.E0 };
 
             foreach (var e in events)
             {
                 Console.WriteLine($"Current state: {fsm.Current}");
-                Console.WriteLine($"Available events: {string.Join(", ", fsm.GetEvents())}");
+                Console.WriteLine($"Available events: {string.Join(", ", fsm.GetAvailableEvents())}");
                 Console.WriteLine($"Result: {await fsm.TriggerAsync(e)}\n\n");
             }
 

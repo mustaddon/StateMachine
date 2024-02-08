@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FluentStateMachine._internal;
 
 namespace FluentStateMachine;
 
 public class FsmConfig<TState, TEvent>
 {
-    internal FsmBuilder<TState, TEvent> Root;
+    internal FsmConfig(FsmBuilder<TState, TEvent> root)
+    {
+        Root = root;
+    }
+
+    internal readonly FsmBuilder<TState, TEvent> Root;
 
     public FsmStateConfig<TState, TEvent> State(TState state)
         => Root.State(state);
@@ -16,7 +22,13 @@ public class FsmConfig<TState, TEvent>
 
 public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 {
-    internal FsmStateModel<TState, TEvent> Model;
+    internal FsmStateConfig(FsmBuilder<TState, TEvent> root, FsmStateModel<TState, TEvent> model)
+        : base(root)
+    {
+        Model = model;
+    }
+
+    internal readonly FsmStateModel<TState, TEvent> Model;
 
     public FsmEventConfig<TState, TEvent> On(TEvent e)
     {
@@ -27,12 +39,7 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
         else
             Model.Events.Add(e, eventModel);
 
-        return new FsmEventConfig<TState, TEvent>
-        {
-            Model = eventModel,
-            Root = Root,
-            Parent = this,
-        };
+        return new FsmEventConfig<TState, TEvent>(Root, eventModel, this);
     }
 
     public FsmStateConfig<TState, TEvent> OnEnter(Func<FsmEnterArgs<TState, TEvent>, Task> action)
@@ -56,9 +63,16 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
 public class FsmEventConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 {
-    internal FsmEventModel<TState, TEvent> Model;
+    internal FsmEventConfig(FsmBuilder<TState, TEvent> root, FsmEventModel<TState, TEvent> model, FsmStateConfig<TState, TEvent> parent = null)
+        : base(root)
+    {
+        Model = model;
+        Parent = parent;
+    }
 
-    internal FsmStateConfig<TState, TEvent> Parent;
+    internal readonly FsmEventModel<TState, TEvent> Model;
+
+    internal readonly FsmStateConfig<TState, TEvent> Parent;
 
     public FsmEventConfig<TState, TEvent> On(TEvent e) => Parent?.On(e) ?? Root.On(e);
 

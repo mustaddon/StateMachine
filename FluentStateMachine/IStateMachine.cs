@@ -7,19 +7,13 @@ namespace FluentStateMachine;
 public interface IStateMachine<TState, TEvent> : IStateMachine
 {
     TState Current { get; }
-
+    ICollection<TState> States { get; }
+    ICollection<TEvent> Events { get; }
+    Task<bool> IsAvailableStateAsync(TState value, object data = null, CancellationToken cancellationToken = default);
+    Task<bool> IsAvailableEventAsync(TEvent value, object data = null, CancellationToken cancellationToken = default);
     Task<object> TriggerAsync(TEvent e, object data = null, CancellationToken cancellationToken = default);
     Task<bool> JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default);
     Task ResetToAsync(TState state, CancellationToken cancellationToken = default);
-
-#if NETSTANDARD2_1_OR_GREATER || NET6_0_OR_GREATER
-    IAsyncEnumerable<TState> GetStatesAsync(object data = null, CancellationToken cancellationToken = default);
-    IAsyncEnumerable<TEvent> GetEventsAsync(object data = null, CancellationToken cancellationToken = default);
-#else
-    Task<IEnumerable<TState>> GetStatesAsync(object data = null, CancellationToken cancellationToken = default);
-    Task<IEnumerable<TEvent>> GetEventsAsync(object data = null, CancellationToken cancellationToken = default);
-#endif
-
 }
 
 public interface IStateMachine

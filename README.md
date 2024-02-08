@@ -30,3 +30,4 @@ fsm.Trigger(Event.E3);
 // Enter to final state
 ```
 
+[Example.ConsoleApp](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/Program.cs)

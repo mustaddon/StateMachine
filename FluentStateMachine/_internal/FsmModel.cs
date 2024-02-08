@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FluentStateMachine;
+namespace FluentStateMachine._internal;
 
-public class FsmModel<TState, TEvent>
+internal class FsmModel<TState, TEvent>
 {
     public TState Start { get; set; }
     public Func<FsmTriggerArgs<TState, TEvent>, Task> OnTrigger { get; set; }
@@ -19,7 +19,7 @@ public class FsmModel<TState, TEvent>
     public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; } = [];
 }
 
-public class FsmStateModel<TState, TEvent>
+internal class FsmStateModel<TState, TEvent>
 {
     public Func<FsmEnterArgs<TState, TEvent>, Task<bool>> Enable { get; set; }
     public Func<FsmEnterArgs<TState, TEvent>, Task> OnEnter { get; set; }
@@ -27,7 +27,7 @@ public class FsmStateModel<TState, TEvent>
     public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; } = [];
 }
 
-public class FsmEventModel<TState, TEvent>
+internal class FsmEventModel<TState, TEvent>
 {
     public Func<FsmTriggerArgs<TState, TEvent>, Task<bool>> Enable { get; set; }
     public Func<FsmTriggerArgs<TState, TEvent>, Task<object>> Execute { get; set; }

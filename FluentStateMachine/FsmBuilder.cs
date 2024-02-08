@@ -1,60 +1,58 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FluentStateMachine._internal;
 
 namespace FluentStateMachine;
 
-public class FsmBuilder<TState, TEvent>(FsmModel<TState, TEvent> model)
+public class FsmBuilder<TState, TEvent>(TState start)
 {
-    public FsmBuilder(TState start) : this(new FsmModel<TState, TEvent> { Start = start })
-    { }
-
-    private readonly FsmModel<TState, TEvent> Model = model;
+    private readonly FsmModel<TState, TEvent> _model = new() { Start = start };
 
     public FsmBuilder<TState, TEvent> OnReset(Func<FsmResetArgs<TState, TEvent>, Task> action)
     {
-        Model.OnReset = action;
+        _model.OnReset = action;
         return this;
     }
 
     public FsmBuilder<TState, TEvent> OnExit(Func<FsmExitArgs<TState, TEvent>, Task> action)
     {
-        Model.OnExit = action;
+        _model.OnExit = action;
         return this;
     }
 
     public FsmBuilder<TState, TEvent> OnEnter(Func<FsmEnterArgs<TState, TEvent>, Task> action)
     {
-        Model.OnEnter = action;
+        _model.OnEnter = action;
         return this;
     }
 
     public FsmBuilder<TState, TEvent> OnJump(Func<FsmEnterArgs<TState, TEvent>, Task> action)
     {
-        Model.OnJump = action;
+        _model.OnJump = action;
         return this;
     }
 
     public FsmBuilder<TState, TEvent> OnTrigger(Func<FsmTriggerArgs<TState, TEvent>, Task> action)
     {
-        Model.OnTrigger = action;
+        _model.OnTrigger = action;
         return this;
     }
 
     public FsmBuilder<TState, TEvent> OnFire(Func<FsmTriggerArgs<TState, TEvent>, Task> action)
     {
-        Model.OnFire = action;
+        _model.OnFire = action;
         return this;
     }
 
     public FsmBuilder<TState, TEvent> OnComplete(Func<FsmCompleteArgs<TState, TEvent>, Task> action)
     {
-        Model.OnComplete = action;
+        _model.OnComplete = action;
         return this;
     }
 
     public FsmBuilder<TState, TEvent> OnError(Func<FsmErrorArgs<TState, TEvent>, Task> action)
     {
-        Model.OnError = action;
+        _model.OnError = action;
         return this;
     }
 
@@ -62,41 +60,31 @@ public class FsmBuilder<TState, TEvent>(FsmModel<TState, TEvent> model)
     {
         var eventModel = new FsmEventModel<TState, TEvent>();
 
-        if (Model.Events.ContainsKey(e))
-            Model.Events[e] = eventModel;
+        if (_model.Events.ContainsKey(e))
+            _model.Events[e] = eventModel;
         else
-            Model.Events.Add(e, eventModel);
+            _model.Events.Add(e, eventModel);
 
-        return new FsmEventConfig<TState, TEvent>
-        {
-            Model = eventModel,
-            Root = this,
-        };
+        return new FsmEventConfig<TState, TEvent>(this, eventModel);
     }
 
     public FsmStateConfig<TState, TEvent> State(TState state)
     {
         var stateModel = new FsmStateModel<TState, TEvent>();
 
-        if (Model.States.ContainsKey(state))
-            Model.States[state] = stateModel;
+        if (_model.States.ContainsKey(state))
+            _model.States[state] = stateModel;
         else
-            Model.States.Add(state, stateModel);
+            _model.States.Add(state, stateModel);
 
-        return new FsmStateConfig<TState, TEvent>
-        {
-            Model = stateModel,
-            Root = this,
-        };
+        return new FsmStateConfig<TState, TEvent>(this, stateModel);
     }
 
     public IStateMachine<TState, TEvent> Build()
     {
-        if (!Model.States.ContainsKey(Model.Start))
-            throw new Exception(_startNotContains);
+        if (!_model.States.ContainsKey(_model.Start))
+            throw new Exception($"States collection is not contains start point '{_model.Start}'");
 
-        return new StateMachine<TState, TEvent>(Model);
+        return new StateMachine<TState, TEvent>(_model);
     }
-
-    private const string _startNotContains = "States collection is not contains start point";
 }
