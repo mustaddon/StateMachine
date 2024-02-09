@@ -9,13 +9,13 @@ public static class FsmConfigExtensions
     public static FsmStateConfig<TState, TEvent> OnEnter<TState, TEvent>(this FsmStateConfig<TState, TEvent> cfg,
         Action<FsmEnterArgs<TState, TEvent>> action)
     {
-        return cfg.OnEnter(x => { action(x); return FrameworkExt.CompletedTask; });
+        return cfg.OnEnter(x => { action(x); return CrossFramework.CompletedTask; });
     }
 
     public static FsmStateConfig<TState, TEvent> OnExit<TState, TEvent>(this FsmStateConfig<TState, TEvent> cfg,
         Action<FsmExitArgs<TState, TEvent>> action)
     {
-        return cfg.OnExit(x => { action(x); return FrameworkExt.CompletedTask; });
+        return cfg.OnExit(x => { action(x); return CrossFramework.CompletedTask; });
     }
 
     public static FsmStateConfig<TState, TEvent> Enable<TState, TEvent>(this FsmStateConfig<TState, TEvent> cfg,
@@ -23,7 +23,6 @@ public static class FsmConfigExtensions
     {
         return cfg.Enable(x => Task.FromResult(fn(x)));
     }
-
 
 
     public static FsmEventConfig<TState, TEvent> Execute<TState, TEvent>(this FsmEventConfig<TState, TEvent> cfg,

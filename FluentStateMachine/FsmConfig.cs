@@ -76,7 +76,13 @@ public class FsmEventConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
     public FsmEventConfig<TState, TEvent> On(TEvent e) => Parent?.On(e) ?? Root.On(e);
 
-    public FsmEventConfig<TState, TEvent> Execute(Func<FsmTriggerArgs<TState, TEvent>, Task<object>> fn)
+    public FsmEventConfig<TState, TEvent> Execute(Func<FsmTriggerArgs<TState, TEvent>, Task> fn)
+    {
+        Model.Execute = fn;
+        return this;
+    }
+
+    public FsmEventConfig<TState, TEvent> Execute<TResult>(Func<FsmTriggerArgs<TState, TEvent>, Task<TResult>> fn)
     {
         Model.Execute = fn;
         return this;

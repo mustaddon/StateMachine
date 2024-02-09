@@ -1,5 +1,6 @@
 ﻿using FluentStateMachine._internal;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -22,21 +23,11 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 
     public ICollection<TState> States => _model.States.Keys;
 
-    public ICollection<TEvent> Events { 
-        get {
-            var state = Current;
+    public ICollection<TEvent> Events => _model.Events.Count == 0 ? _model.States[Current].Events.Keys
+        : _model.States[Current].Events.Count == 0 ? _model.Events.Keys
+        : (_events ??= []).GetOrAdd(Current, k => new HashSet<TEvent>(_model.Events.Keys.Concat(_model.States[k].Events.Keys)));
 
-            if (_events == null || !EqualityComparer<TState>.Default.Equals(state, _eventsState)) {
-                _events = new(() => new(_model.Events.Keys.Concat(_model.States[state].Events.Keys)));
-                _eventsState = state;
-            }
-
-            return _events.Value;
-        }
-    }
-
-    private Lazy<HashSet<TEvent>> _events;
-    private TState _eventsState;
+    private ConcurrentDictionary<TState, ICollection<TEvent>> _events;
 
 
     public Task<bool> IsAvailableStateAsync(TState value, object data = null, CancellationToken cancellationToken = default)
@@ -104,8 +95,16 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 
         await OnFire(args).ConfigureAwait(false);
 
-        var result = eventModel.Execute == null ? null
-            : await eventModel.Execute(args).ConfigureAwait(false);
+        object result = null;
+        var executeTask = eventModel.Execute?.Invoke(args);
+
+        if (executeTask != null)
+        {
+            await executeTask.ConfigureAwait(false);
+
+            if (eventModel.Execute.Method.ReturnType.IsGenericType)
+                result = executeTask.GetResult();
+        }
 
         if (eventModel.JumpTo != null)
         {
@@ -182,17 +181,17 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 
     private Task OnReset(FsmResetArgs<TState, TEvent> args)
     {
-        return _model.OnReset?.Invoke(args) ?? FrameworkExt.CompletedTask;
+        return _model.OnReset?.Invoke(args) ?? CrossFramework.CompletedTask;
     }
 
     private Task OnTrigger(FsmTriggerArgs<TState, TEvent> args)
     {
-        return _model.OnTrigger?.Invoke(args) ?? FrameworkExt.CompletedTask;
+        return _model.OnTrigger?.Invoke(args) ?? CrossFramework.CompletedTask;
     }
 
     private Task OnFire(FsmTriggerArgs<TState, TEvent> args)
     {
-        return _model.OnFire?.Invoke(args) ?? FrameworkExt.CompletedTask;
+        return _model.OnFire?.Invoke(args) ?? CrossFramework.CompletedTask;
     }
 
     private async Task OnExit(FsmDataArgs<TState, TEvent> args, TState next)
@@ -223,7 +222,7 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 
     private Task OnJump(FsmEnterArgs<TState, TEvent> args)
     {
-        return _model.OnJump?.Invoke(args) ?? FrameworkExt.CompletedTask;
+        return _model.OnJump?.Invoke(args) ?? CrossFramework.CompletedTask;
     }
 
     private Task OnComplete(FsmTriggerArgs<TState, TEvent> args, object result)
@@ -235,7 +234,7 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
             Data = args.Data,
             CancellationToken = args.CancellationToken,
             Result = result,
-        }) ?? FrameworkExt.CompletedTask;
+        }) ?? CrossFramework.CompletedTask;
     }
 
     private Task OnError(FsmDataArgs<TState, TEvent> args, string message, params object[] formatArgs)
@@ -246,7 +245,7 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
             Data = args.Data,
             CancellationToken = args.CancellationToken,
             Message = string.Format(message, formatArgs),
-        }) ?? FrameworkExt.CompletedTask;
+        }) ?? CrossFramework.CompletedTask;
     }
 
 

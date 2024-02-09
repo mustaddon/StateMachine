@@ -30,6 +30,6 @@ internal class FsmStateModel<TState, TEvent>
 internal class FsmEventModel<TState, TEvent>
 {
     public Func<FsmTriggerArgs<TState, TEvent>, Task<bool>> Enable { get; set; }
-    public Func<FsmTriggerArgs<TState, TEvent>, Task<object>> Execute { get; set; }
+    public Func<FsmTriggerArgs<TState, TEvent>, Task> Execute { get; set; }
     public Func<FsmTriggerArgs<TState, TEvent>, Task<TState>> JumpTo { get; set; }
 }
