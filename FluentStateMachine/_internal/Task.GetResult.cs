@@ -2,15 +2,8 @@
 
 namespace FluentStateMachine._internal;
 
-internal static class CrossFramework
+internal static partial class TaskExt
 {
-
-#if NET45
-    public static readonly Task CompletedTask = Task.FromResult(false);
-#else
-    public static readonly Task CompletedTask = Task.CompletedTask;
-#endif
-
 #if NET6_0_OR_GREATER
     public static object GetResult(this Task task) => ((dynamic)task).Result;
 #else

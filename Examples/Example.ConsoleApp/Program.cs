@@ -12,12 +12,13 @@ namespace ConsoleApp
         static async Task Main()
         {
             var fsm = new FsmBuilder<State, Event>(State.S1)
+                .OnError(x => Console.WriteLine($"On error {x.Fsm.Current}: {x.Error}"))
+                .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
+                .OnComplete(x => Console.WriteLine($"On complete (triggered and state{(x.Fsm.Current == x.PrevState ? " not " : " ")}changed)"))
+                .OnExit(x => Console.WriteLine($"Exit state {x.Fsm.Current} to {x.NextState}"))
+                .OnEnter(x => Console.WriteLine($"Enter state {x.Fsm.Current} from {x.PrevState}"))
                 .OnJump(x => Console.WriteLine($"On jump to {x.Fsm.Current} from {x.PrevState}"))
                 .OnReset(x => Console.WriteLine($"On reset to {x.Fsm.Current} from {x.PrevState}"))
-                .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
-                .OnError(x => Console.WriteLine($"On error {x.Fsm.Current}: {x.Message}"))
-                .OnEnter(x => Console.WriteLine($"Enter state {x.Fsm.Current} from {x.PrevState}"))
-                .OnExit(x => Console.WriteLine($"Exit state {x.Fsm.Current} to {x.NextState}"))
                 .On(Event.E0).Execute(x => "shared to all states")
 
                 .State(State.S1)

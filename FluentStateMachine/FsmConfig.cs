@@ -42,19 +42,19 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
         return new FsmEventConfig<TState, TEvent>(Root, eventModel, this);
     }
 
-    public FsmStateConfig<TState, TEvent> OnEnter(Func<FsmEnterArgs<TState, TEvent>, Task> action)
+    public FsmStateConfig<TState, TEvent> OnEnter(Func<IFsmEnterArgs<TState, TEvent>, Task> action)
     {
         Model.OnEnter = action;
         return this;
     }
 
-    public FsmStateConfig<TState, TEvent> OnExit(Func<FsmExitArgs<TState, TEvent>, Task> action)
+    public FsmStateConfig<TState, TEvent> OnExit(Func<IFsmExitArgs<TState, TEvent>, Task> action)
     {
         Model.OnExit = action;
         return this;
     }
 
-    public FsmStateConfig<TState, TEvent> Enable(Func<FsmEnterArgs<TState, TEvent>, Task<bool>> fn)
+    public FsmStateConfig<TState, TEvent> Enable(Func<IFsmEnterArgs<TState, TEvent>, Task<bool>> fn)
     {
         Model.Enable = fn;
         return this;
@@ -76,25 +76,25 @@ public class FsmEventConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
     public FsmEventConfig<TState, TEvent> On(TEvent e) => Parent?.On(e) ?? Root.On(e);
 
-    public FsmEventConfig<TState, TEvent> Execute(Func<FsmTriggerArgs<TState, TEvent>, Task> fn)
+    public FsmEventConfig<TState, TEvent> Execute(Func<IFsmTriggerArgs<TState, TEvent>, Task> fn)
     {
         Model.Execute = fn;
         return this;
     }
 
-    public FsmEventConfig<TState, TEvent> Execute<TResult>(Func<FsmTriggerArgs<TState, TEvent>, Task<TResult>> fn)
+    public FsmEventConfig<TState, TEvent> Execute<TResult>(Func<IFsmTriggerArgs<TState, TEvent>, Task<TResult>> fn)
     {
         Model.Execute = fn;
         return this;
     }
 
-    public FsmEventConfig<TState, TEvent> Enable(Func<FsmTriggerArgs<TState, TEvent>, Task<bool>> fn)
+    public FsmEventConfig<TState, TEvent> Enable(Func<IFsmTriggerArgs<TState, TEvent>, Task<bool>> fn)
     {
         Model.Enable = fn;
         return this;
     }
 
-    public FsmEventConfig<TState, TEvent> JumpTo(Func<FsmTriggerArgs<TState, TEvent>, Task<TState>> fn)
+    public FsmEventConfig<TState, TEvent> JumpTo(Func<IFsmTriggerArgs<TState, TEvent>, Task<TState>> fn)
     {
         Model.JumpTo = fn;
         return this;

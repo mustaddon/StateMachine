@@ -1,5 +1,4 @@
 ﻿using FluentStateMachine._internal;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +37,7 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
         if (stateModel.Enable == null)
             return Task.FromResult(true);
 
-        return stateModel.Enable?.Invoke(new FsmEnterArgs<TState, TEvent>
+        return stateModel.Enable(new FsmEnterExitArgs<TState, TEvent>
         {
             Fsm = this,
             PrevState = Current,
@@ -67,15 +66,17 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 
     public async Task<object> TriggerAsync(TEvent e, object data = null, CancellationToken cancellationToken = default)
     {
-        var args = new FsmTriggerArgs<TState, TEvent>
+        var args = new FsmCompleteArgs<TState, TEvent>
         {
             Fsm = this,
             Event = e,
             Data = data,
             CancellationToken = cancellationToken,
+            PrevState = Current,
         };
 
-        await OnTrigger(args).ConfigureAwait(false);
+        if (_model.OnTrigger != null)
+            await _model.OnTrigger(args).ConfigureAwait(false);
 
         var stateModel = _model.States[Current];
 
@@ -93,13 +94,14 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await OnFire(args).ConfigureAwait(false);
+        if (_model.OnFire != null)
+            await _model.OnFire(args).ConfigureAwait(false);
 
         object result = null;
-        var executeTask = eventModel.Execute?.Invoke(args);
 
-        if (executeTask != null)
+        if (eventModel.Execute != null)
         {
+            var executeTask = eventModel.Execute(args);
             await executeTask.ConfigureAwait(false);
 
             if (eventModel.Execute.Method.ReturnType.IsGenericType)
@@ -115,45 +117,58 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
                 result = done;
         }
 
-        await OnComplete(args, result).ConfigureAwait(false);
+        args.Result = result;
+
+        if (_model.OnComplete != null)
+            await _model.OnComplete(args).ConfigureAwait(false);
 
         return result;
     }
 
     public async Task<bool> JumpToAsync(TState next, object data = null, CancellationToken cancellationToken = default)
     {
-        var enterArgs = new FsmEnterArgs<TState, TEvent>
+        var args = new FsmEnterExitArgs<TState, TEvent>
         {
             Fsm = this,
-            PrevState = Current,
             Data = data,
             CancellationToken = cancellationToken,
+            PrevState = Current,
+            NextState = next,
         };
 
         if (!_model.States.ContainsKey(next))
         {
-            await OnError(enterArgs, "Next state '{0}' not found", next).ConfigureAwait(false);
+            await OnError(args, "Next state '{0}' not found", next).ConfigureAwait(false);
             return false;
         }
 
         var nextModel = _model.States[next];
 
-        if (nextModel.Enable != null && !await nextModel.Enable(enterArgs).ConfigureAwait(false))
+        if (nextModel.Enable != null && !await nextModel.Enable(args).ConfigureAwait(false))
         {
-            await OnError(enterArgs, "Next state '{0}' disabled", next).ConfigureAwait(false);
+            await OnError(args, "Next state '{0}' disabled", next).ConfigureAwait(false);
             return false;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        await OnExit(enterArgs, next).ConfigureAwait(false);
+        if (_model.OnExit != null)
+            await _model.OnExit(args).ConfigureAwait(false);
+
+        if (_model.States[Current].OnExit != null)
+            await _model.States[Current].OnExit(args).ConfigureAwait(false);
 
         lock (_locker)
             Current = next;
 
-        await OnEnter(enterArgs).ConfigureAwait(false);
+        if (_model.OnEnter != null)
+            await _model.OnEnter(args).ConfigureAwait(false);
 
-        await OnJump(enterArgs).ConfigureAwait(false);
+        if (_model.States[Current].OnEnter != null)
+            await _model.States[Current].OnEnter(args).ConfigureAwait(false);
+
+        if (_model.OnJump != null)
+            await _model.OnJump(args).ConfigureAwait(false);
 
         return true;
     }
@@ -174,78 +189,17 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
         lock (_locker)
             Current = state;
 
-        await OnReset(args).ConfigureAwait(false);
+        if (_model.OnReset != null)
+            await _model.OnReset(args).ConfigureAwait(false);
     }
 
-
-
-    private Task OnReset(FsmResetArgs<TState, TEvent> args)
+    private Task OnError(FsmErrorArgs<TState, TEvent> args, string message, params object[] formatArgs)
     {
-        return _model.OnReset?.Invoke(args) ?? CrossFramework.CompletedTask;
-    }
+        if (_model.OnError == null)
+            return Task.CompletedTask;
 
-    private Task OnTrigger(FsmTriggerArgs<TState, TEvent> args)
-    {
-        return _model.OnTrigger?.Invoke(args) ?? CrossFramework.CompletedTask;
-    }
-
-    private Task OnFire(FsmTriggerArgs<TState, TEvent> args)
-    {
-        return _model.OnFire?.Invoke(args) ?? CrossFramework.CompletedTask;
-    }
-
-    private async Task OnExit(FsmDataArgs<TState, TEvent> args, TState next)
-    {
-        var exitArgs = new FsmExitArgs<TState, TEvent>
-        {
-            Fsm = this,
-            Data = args.Data,
-            CancellationToken = args.CancellationToken,
-            NextState = next,
-        };
-
-        if (_model.OnExit != null)
-            await _model.OnExit(exitArgs).ConfigureAwait(false);
-
-        if (_model.States[Current].OnExit != null)
-            await _model.States[Current].OnExit(exitArgs).ConfigureAwait(false);
-    }
-
-    private async Task OnEnter(FsmEnterArgs<TState, TEvent> args)
-    {
-        if (_model.OnEnter != null)
-            await _model.OnEnter(args).ConfigureAwait(false);
-
-        if (_model.States[Current].OnEnter != null)
-            await _model.States[Current].OnEnter(args).ConfigureAwait(false);
-    }
-
-    private Task OnJump(FsmEnterArgs<TState, TEvent> args)
-    {
-        return _model.OnJump?.Invoke(args) ?? CrossFramework.CompletedTask;
-    }
-
-    private Task OnComplete(FsmTriggerArgs<TState, TEvent> args, object result)
-    {
-        return _model.OnComplete?.Invoke(new FsmCompleteArgs<TState, TEvent>
-        {
-            Fsm = this,
-            Event = args.Event,
-            Data = args.Data,
-            CancellationToken = args.CancellationToken,
-            Result = result,
-        }) ?? CrossFramework.CompletedTask;
-    }
-
-    private Task OnError(FsmDataArgs<TState, TEvent> args, string message, params object[] formatArgs)
-    {
-        return _model.OnError?.Invoke(new FsmErrorArgs<TState, TEvent>
-        {
-            Fsm = this,
-            Data = args.Data,
-            CancellationToken = args.CancellationToken,
-            Message = string.Format(message, formatArgs),
-        }) ?? CrossFramework.CompletedTask;
+        args.Error = string.Format(message, formatArgs);
+        return _model.OnError(args);
     }
 
 

@@ -1,38 +1,37 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FluentStateMachine._internal;
 
 namespace FluentStateMachine;
 
 public static class FsmConfigExtensions
 {
     public static FsmStateConfig<TState, TEvent> OnEnter<TState, TEvent>(this FsmStateConfig<TState, TEvent> cfg,
-        Action<FsmEnterArgs<TState, TEvent>> action)
+        Action<IFsmEnterArgs<TState, TEvent>> action)
     {
-        return cfg.OnEnter(x => { action(x); return CrossFramework.CompletedTask; });
+        return cfg.OnEnter(x => { action(x); return Task.CompletedTask; });
     }
 
     public static FsmStateConfig<TState, TEvent> OnExit<TState, TEvent>(this FsmStateConfig<TState, TEvent> cfg,
-        Action<FsmExitArgs<TState, TEvent>> action)
+        Action<IFsmExitArgs<TState, TEvent>> action)
     {
-        return cfg.OnExit(x => { action(x); return CrossFramework.CompletedTask; });
+        return cfg.OnExit(x => { action(x); return Task.CompletedTask; });
     }
 
     public static FsmStateConfig<TState, TEvent> Enable<TState, TEvent>(this FsmStateConfig<TState, TEvent> cfg,
-        Func<FsmEnterArgs<TState, TEvent>, bool> fn)
+        Func<IFsmEnterArgs<TState, TEvent>, bool> fn)
     {
         return cfg.Enable(x => Task.FromResult(fn(x)));
     }
 
 
     public static FsmEventConfig<TState, TEvent> Execute<TState, TEvent>(this FsmEventConfig<TState, TEvent> cfg,
-        Func<FsmTriggerArgs<TState, TEvent>, object> fn)
+        Func<IFsmTriggerArgs<TState, TEvent>, object> fn)
     {
         return cfg.Execute(x => Task.FromResult(fn(x)));
     }
 
     public static FsmEventConfig<TState, TEvent> Enable<TState, TEvent>(this FsmEventConfig<TState, TEvent> cfg,
-        Func<FsmTriggerArgs<TState, TEvent>, bool> fn)
+        Func<IFsmTriggerArgs<TState, TEvent>, bool> fn)
     {
         return cfg.Enable(x => Task.FromResult(fn(x)));
     }
@@ -44,7 +43,7 @@ public static class FsmConfigExtensions
     }
 
     public static FsmEventConfig<TState, TEvent> JumpTo<TState, TEvent>(this FsmEventConfig<TState, TEvent> cfg,
-        Func<FsmTriggerArgs<TState, TEvent>, TState> fn)
+        Func<IFsmTriggerArgs<TState, TEvent>, TState> fn)
     {
         return cfg.JumpTo(x => Task.FromResult(fn(x)));
     }

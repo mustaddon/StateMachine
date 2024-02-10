@@ -8,49 +8,49 @@ public class FsmBuilder<TState, TEvent>(TState start)
 {
     private readonly FsmModel<TState, TEvent> _model = new() { Start = start };
 
-    public FsmBuilder<TState, TEvent> OnReset(Func<FsmResetArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnReset(Func<IFsmResetArgs<TState, TEvent>, Task> action)
     {
         _model.OnReset = action;
         return this;
     }
 
-    public FsmBuilder<TState, TEvent> OnExit(Func<FsmExitArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnExit(Func<IFsmExitArgs<TState, TEvent>, Task> action)
     {
         _model.OnExit = action;
         return this;
     }
 
-    public FsmBuilder<TState, TEvent> OnEnter(Func<FsmEnterArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnEnter(Func<IFsmEnterArgs<TState, TEvent>, Task> action)
     {
         _model.OnEnter = action;
         return this;
     }
 
-    public FsmBuilder<TState, TEvent> OnJump(Func<FsmEnterArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnJump(Func<IFsmEnterArgs<TState, TEvent>, Task> action)
     {
         _model.OnJump = action;
         return this;
     }
 
-    public FsmBuilder<TState, TEvent> OnTrigger(Func<FsmTriggerArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnTrigger(Func<IFsmTriggerArgs<TState, TEvent>, Task> action)
     {
         _model.OnTrigger = action;
         return this;
     }
 
-    public FsmBuilder<TState, TEvent> OnFire(Func<FsmTriggerArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnFire(Func<IFsmTriggerArgs<TState, TEvent>, Task> action)
     {
         _model.OnFire = action;
         return this;
     }
 
-    public FsmBuilder<TState, TEvent> OnComplete(Func<FsmCompleteArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnComplete(Func<IFsmCompleteArgs<TState, TEvent>, Task> action)
     {
         _model.OnComplete = action;
         return this;
     }
 
-    public FsmBuilder<TState, TEvent> OnError(Func<FsmErrorArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnError(Func<IFsmErrorArgs<TState, TEvent>, Task> action)
     {
         _model.OnError = action;
         return this;
