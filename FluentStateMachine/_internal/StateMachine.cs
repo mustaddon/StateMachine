@@ -135,13 +135,11 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
             NextState = next,
         };
 
-        if (!_model.States.ContainsKey(next))
+        if (!_model.States.TryGetValue(next, out var nextModel))
         {
             await OnError(args, "Next state '{0}' not found", next).ConfigureAwait(false);
             return false;
         }
-
-        var nextModel = _model.States[next];
 
         if (nextModel.Enable != null && !await nextModel.Enable(args).ConfigureAwait(false))
         {
@@ -151,11 +149,13 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
 
         cancellationToken.ThrowIfCancellationRequested();
 
+        var currentModel = _model.States[Current];
+
         if (_model.OnExit != null)
             await _model.OnExit(args).ConfigureAwait(false);
 
-        if (_model.States[Current].OnExit != null)
-            await _model.States[Current].OnExit(args).ConfigureAwait(false);
+        if (currentModel.OnExit != null)
+            await currentModel.OnExit(args).ConfigureAwait(false);
 
         lock (_locker)
             Current = next;
@@ -163,8 +163,8 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (_model.OnEnter != null)
             await _model.OnEnter(args).ConfigureAwait(false);
 
-        if (_model.States[Current].OnEnter != null)
-            await _model.States[Current].OnEnter(args).ConfigureAwait(false);
+        if (currentModel.OnEnter != null)
+            await currentModel.OnEnter(args).ConfigureAwait(false);
 
         if (_model.OnJump != null)
             await _model.OnJump(args).ConfigureAwait(false);

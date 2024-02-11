@@ -32,12 +32,8 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
     public FsmEventConfig<TState, TEvent> On(TEvent e)
     {
-        var eventModel = new FsmEventModel<TState, TEvent>();
-
-        if (Model.Events.ContainsKey(e))
-            Model.Events[e] = eventModel;
-        else
-            Model.Events.Add(e, eventModel);
+        if (!Model.Events.TryGetValue(e, out var eventModel))
+            Model.Events.Add(e, eventModel = new());
 
         return new FsmEventConfig<TState, TEvent>(Root, eventModel, this);
     }
