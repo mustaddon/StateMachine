@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FluentStateMachine._internal;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,18 +34,22 @@ public static class IStateMachineExtensions
     public static async Task<ICollection<TState>> GetAvailableStatesAsync<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, object data = null, CancellationToken cancellationToken = default)
     {
         var result = new HashSet<TState>();
+
         foreach (var value in fsm.States)
             if (await fsm.IsAvailableStateAsync(value, data, cancellationToken))
                 result.Add(value);
+
         return result;
     }
 
     public static async Task<ICollection<TEvent>> GetAvailableEventsAsync<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, object data = null, CancellationToken cancellationToken = default)
     {
         var result = new HashSet<TEvent>();
+
         foreach (var value in fsm.Events)
             if (await fsm.IsAvailableEventAsync(value, data, cancellationToken))
                 result.Add(value);
+
         return result;
     }
 }

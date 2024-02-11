@@ -1,6 +1,7 @@
 ﻿using FluentStateMachine._internal;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 
     public ICollection<TEvent> Events => _model.Events.Count == 0 ? _model.States[Current].Events.Keys
         : _model.States[Current].Events.Count == 0 ? _model.Events.Keys
-        : (_events ??= []).GetOrAdd(Current, k => new HashSet<TEvent>(_model.Events.Keys.Concat(_model.States[k].Events.Keys)));
+        : (_events ??= []).GetOrAdd(Current, k => new ReadOnlyHashSet<TEvent>(_model.Events.Keys.Concat(_model.States[k].Events.Keys)));
 
     private ConcurrentDictionary<TState, ICollection<TEvent>> _events;
 
