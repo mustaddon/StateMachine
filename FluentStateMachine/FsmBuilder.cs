@@ -1,12 +1,18 @@
-﻿using System;
+﻿using FluentStateMachine._internal;
+using System;
 using System.Threading.Tasks;
-using FluentStateMachine._internal;
 
 namespace FluentStateMachine;
 
-public class FsmBuilder<TState, TEvent>(TState start)
+public class FsmBuilder<TState, TEvent>
 {
-    private readonly FsmModel<TState, TEvent> _model = new() { Start = start };
+    public FsmBuilder(TState start)
+    {
+        _model = new() { Start = start };
+        _model.States.Add(start, new());
+    }
+
+    private readonly FsmModel<TState, TEvent> _model;
 
     public FsmBuilder<TState, TEvent> OnReset(Func<IFsmResetArgs<TState, TEvent>, Task> action)
     {
@@ -58,33 +64,22 @@ public class FsmBuilder<TState, TEvent>(TState start)
 
     public FsmEventConfig<TState, TEvent> On(TEvent e)
     {
-        var eventModel = new FsmEventModel<TState, TEvent>();
-
-        if (_model.Events.ContainsKey(e))
-            _model.Events[e] = eventModel;
-        else
-            _model.Events.Add(e, eventModel);
+        if (!_model.Events.TryGetValue(e, out var eventModel))
+            _model.Events.Add(e, eventModel = new());
 
         return new FsmEventConfig<TState, TEvent>(this, eventModel);
     }
 
     public FsmStateConfig<TState, TEvent> State(TState state)
     {
-        var stateModel = new FsmStateModel<TState, TEvent>();
-
-        if (_model.States.ContainsKey(state))
-            _model.States[state] = stateModel;
-        else
-            _model.States.Add(state, stateModel);
+        if (!_model.States.TryGetValue(state, out var stateModel))
+            _model.States.Add(state, stateModel = new());
 
         return new FsmStateConfig<TState, TEvent>(this, stateModel);
     }
 
     public IStateMachine<TState, TEvent> Build()
     {
-        if (!_model.States.ContainsKey(_model.Start))
-            throw new Exception($"States collection is not contains start point '{_model.Start}'");
-
         return new StateMachine<TState, TEvent>(_model);
     }
 }
