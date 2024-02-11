@@ -1,14 +1,12 @@
-﻿using FluentStateMachine._internal;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FluentStateMachine;
+namespace FluentStateMachine._internal;
 
-public sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
+internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEvent>
 {
     internal StateMachine(FsmModel<TState, TEvent> model)
     {
