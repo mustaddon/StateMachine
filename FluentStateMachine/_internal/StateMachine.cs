@@ -163,8 +163,8 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (_model.OnEnter != null)
             await _model.OnEnter(args).ConfigureAwait(false);
 
-        if (currentModel.OnEnter != null)
-            await currentModel.OnEnter(args).ConfigureAwait(false);
+        if (nextModel.OnEnter != null)
+            await nextModel.OnEnter(args).ConfigureAwait(false);
 
         if (_model.OnJump != null)
             await _model.OnJump(args).ConfigureAwait(false);
