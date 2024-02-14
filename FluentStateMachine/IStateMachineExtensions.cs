@@ -6,16 +6,23 @@ namespace FluentStateMachine;
 
 public static class IStateMachineExtensions
 {
-    public static async Task<TResult> TriggerCastAsync<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default, CancellationToken cancellationToken = default)
+    public static Task<object> TriggerAsync<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, TEvent e, object data = default, CancellationToken cancellationToken = default)
         where TEvent : IFsmEvent
-        => (TResult)await fsm.TriggerAsync((TEvent)e, data, cancellationToken).ConfigureAwait(false);
+        => fsm.TriggerAsync<object>(e, data, cancellationToken);
 
-    public static TResult TriggerCast<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default)
+    public static Task<TResult> TriggerAsync<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default, CancellationToken cancellationToken = default)
         where TEvent : IFsmEvent
-        => TriggerCastAsync(fsm, e, data).Result;
+        => fsm.TriggerAsync<TResult>((TEvent)e, data, cancellationToken);
+
+    public static TResult Trigger<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default)
+        where TEvent : IFsmEvent
+        => TriggerAsync(fsm, e, data).Result;
+
+    public static object Trigger<TState, TEvent, TResult>(this IStateMachine<TState, TEvent> fsm, TEvent e, object data = null)
+        => fsm.TriggerAsync<TResult>(e, data).Result;
 
     public static object Trigger<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, TEvent e, object data = null)
-        => fsm.TriggerAsync(e, data).Result;
+        => fsm.TriggerAsync<object>(e, data).Result;
 
     public static bool JumpTo<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, TState state, object data = null)
         => fsm.JumpToAsync(state, data).Result;

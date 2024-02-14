@@ -11,7 +11,7 @@ public interface IStateMachine<TState, TEvent> : IStateMachine
     ICollection<TEvent> Events { get; }
     Task<bool> IsAvailableStateAsync(TState value, object data = null, CancellationToken cancellationToken = default);
     Task<bool> IsAvailableEventAsync(TEvent value, object data = null, CancellationToken cancellationToken = default);
-    Task<object> TriggerAsync(TEvent e, object data = null, CancellationToken cancellationToken = default);
+    Task<TResult> TriggerAsync<TResult>(TEvent e, object data = null, CancellationToken cancellationToken = default);
     Task<bool> JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default);
     Task ResetToAsync(TState state, CancellationToken cancellationToken = default);
 }

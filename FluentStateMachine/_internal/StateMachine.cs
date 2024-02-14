@@ -63,7 +63,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
     }
 
 
-    public async Task<object> TriggerAsync(TEvent e, object data = null, CancellationToken cancellationToken = default)
+    public async Task<TResult> TriggerAsync<TResult>(TEvent e, object data = null, CancellationToken cancellationToken = default)
     {
         var args = new FsmCompleteArgs<TState, TEvent>
         {
@@ -82,13 +82,13 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (!stateModel.Events.TryGetValue(e, out var eventModel) && !_model.Events.TryGetValue(e, out eventModel))
         {
             await OnError(args, "Event '{0}' not found", e).ConfigureAwait(false);
-            return null;
+            return default;
         }
 
         if (eventModel.Enable != null && !await eventModel.Enable(args).ConfigureAwait(false))
         {
             await OnError(args, "Event '{0}' disabled", e).ConfigureAwait(false);
-            return null;
+            return default;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -96,7 +96,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (_model.OnFire != null)
             await _model.OnFire(args).ConfigureAwait(false);
 
-        object result = null;
+        TResult result = default;
 
         if (eventModel.Execute != null)
         {
@@ -104,16 +104,13 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
             await executeTask.ConfigureAwait(false);
 
             if (eventModel.Execute.Method.ReturnType.IsGenericType)
-                result = executeTask.GetResult();
+                result = executeTask.GetResult<TResult>();
         }
 
         if (eventModel.JumpTo != null)
         {
             var next = await eventModel.JumpTo(args).ConfigureAwait(false);
-            var done = await JumpToAsync(next, data, default).ConfigureAwait(false);
-
-            if (eventModel.Execute == null)
-                result = done;
+            await JumpToAsync(next, data, default).ConfigureAwait(false);
         }
 
         if (_model.OnComplete != null)

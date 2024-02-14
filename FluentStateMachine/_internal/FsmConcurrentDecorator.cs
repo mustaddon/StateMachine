@@ -19,10 +19,10 @@ internal class FsmConcurrentDecorator<TState, TEvent>(IStateMachine<TState, TEve
     public Task<bool> IsAvailableStateAsync(TState value, object data = null, CancellationToken cancellationToken = default)
         => _fsm.IsAvailableStateAsync(value, data, cancellationToken);
 
-    public async Task<object> TriggerAsync(TEvent e, object data = null, CancellationToken cancellationToken = default)
+    public async Task<TResult> TriggerAsync<TResult>(TEvent e, object data = null, CancellationToken cancellationToken = default)
     {
         await _semaphore.WaitAsync(cancellationToken);
-        try { return await _fsm.TriggerAsync(e, data, cancellationToken); }
+        try { return await _fsm.TriggerAsync<TResult>(e, data, cancellationToken); }
         finally { _semaphore.Release(); }
     }
 

@@ -24,10 +24,17 @@ public static class FsmConfigExtensions
     }
 
 
-    public static FsmEventConfig<TState, TEvent> Execute<TState, TEvent>(this FsmEventConfig<TState, TEvent> cfg,
-        Func<IFsmTriggerArgs<TState, TEvent>, object> fn)
+
+    public static FsmEventConfig<TState, TEvent> Execute<TState, TEvent, TResult>(this FsmEventConfig<TState, TEvent> cfg,
+        Func<IFsmTriggerArgs<TState, TEvent>, TResult> fn)
     {
         return cfg.Execute(x => Task.FromResult(fn(x)));
+    }
+
+    public static FsmEventConfig<TState, TEvent> Execute<TState, TEvent>(this FsmEventConfig<TState, TEvent> cfg,
+        Action<IFsmTriggerArgs<TState, TEvent>> action)
+    {
+        return cfg.Execute(x => { action(x); return Task.CompletedTask; });
     }
 
     public static FsmEventConfig<TState, TEvent> Enable<TState, TEvent>(this FsmEventConfig<TState, TEvent> cfg,
