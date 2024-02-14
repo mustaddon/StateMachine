@@ -6,7 +6,7 @@ namespace FluentStateMachine;
 public static class FsmBuilderExtensions
 {
     public static FsmBuilder<TState, TEvent> OnReset<TState, TEvent>(this FsmBuilder<TState, TEvent> builder,
-        Action<IFsmResetArgs<TState, TEvent>> action)
+        Action<IFsmEnterArgs<TState, TEvent>> action)
     {
         return builder.OnReset(x => { action(x); return Task.CompletedTask; });
     }

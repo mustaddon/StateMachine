@@ -8,11 +8,6 @@ internal class FsmArgs<TState, TEvent> : IFsmArgs<TState, TEvent>
     public CancellationToken CancellationToken { get; internal set; }
 }
 
-internal class FsmResetArgs<TState, TEvent> : FsmArgs<TState, TEvent>, IFsmResetArgs<TState, TEvent>
-{
-    public TState PrevState { get; internal set; }
-}
-
 internal class FsmDataArgs<TState, TEvent> : FsmArgs<TState, TEvent>, IFsmDataArgs<TState, TEvent>
 {
     public object Data { get; internal set; }
@@ -23,9 +18,13 @@ internal class FsmErrorArgs<TState, TEvent> : FsmDataArgs<TState, TEvent>, IFsmE
     public string Error { get; internal set; }
 }
 
-internal class FsmEnterExitArgs<TState, TEvent> : FsmErrorArgs<TState, TEvent>, IFsmEnterArgs<TState, TEvent>, IFsmExitArgs<TState, TEvent>
+internal class FsmEnterArgs<TState, TEvent> : FsmErrorArgs<TState, TEvent>, IFsmEnterArgs<TState, TEvent>
 {
     public TState PrevState { get; internal set; }
+}
+
+internal class FsmJumpArgs<TState, TEvent> : FsmEnterArgs<TState, TEvent>, IFsmExitArgs<TState, TEvent>
+{
     public TState NextState { get; internal set; }
 }
 

@@ -13,11 +13,6 @@ public interface IFsmDataArgs<TState, TEvent> : IFsmArgs<TState, TEvent>
     object Data { get; }
 }
 
-public interface IFsmResetArgs<TState, TEvent> : IFsmArgs<TState, TEvent>, IFsmPrevStateArg<TState>
-{
-
-}
-
 public interface IFsmEnterArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent>, IFsmPrevStateArg<TState>
 {
 

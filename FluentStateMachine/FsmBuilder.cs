@@ -14,7 +14,7 @@ public class FsmBuilder<TState, TEvent>
 
     private readonly FsmModel<TState, TEvent> _model;
 
-    public FsmBuilder<TState, TEvent> OnReset(Func<IFsmResetArgs<TState, TEvent>, Task> action)
+    public FsmBuilder<TState, TEvent> OnReset(Func<IFsmEnterArgs<TState, TEvent>, Task> action)
     {
         _model.OnReset = action;
         return this;
@@ -78,8 +78,9 @@ public class FsmBuilder<TState, TEvent>
         return new FsmStateConfig<TState, TEvent>(this, stateModel);
     }
 
-    public IStateMachine<TState, TEvent> Build()
+    public IStateMachine<TState, TEvent> Build(bool concurrent = false)
     {
-        return new StateMachine<TState, TEvent>(_model);
+        var fsm = new StateMachine<TState, TEvent>(_model);
+        return !concurrent ? fsm : new FsmConcurrentDecorator<TState, TEvent>(fsm);
     }
 }

@@ -13,7 +13,7 @@ internal class FsmModel<TState, TEvent>
     public Func<IFsmExitArgs<TState, TEvent>, Task> OnExit { get; set; }
     public Func<IFsmEnterArgs<TState, TEvent>, Task> OnEnter { get; set; }
     public Func<IFsmEnterArgs<TState, TEvent>, Task> OnJump { get; set; }
-    public Func<IFsmResetArgs<TState, TEvent>, Task> OnReset { get; set; }
+    public Func<IFsmEnterArgs<TState, TEvent>, Task> OnReset { get; set; }
     public Func<IFsmErrorArgs<TState, TEvent>, Task> OnError { get; set; }
     public Dictionary<TState, FsmStateModel<TState, TEvent>> States { get; set; } = [];
     public Dictionary<TEvent, FsmEventModel<TState, TEvent>> Events { get; set; } = [];

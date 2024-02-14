@@ -15,7 +15,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
     }
 
     private readonly FsmModel<TState, TEvent> _model;
-    private readonly object _locker = new();
+    private bool _jump = false;
 
     public TState Current { get; private set; }
 
@@ -36,7 +36,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (stateModel.Enable == null)
             return Task.FromResult(true);
 
-        return stateModel.Enable(new FsmEnterExitArgs<TState, TEvent>
+        return stateModel.Enable(new FsmEnterArgs<TState, TEvent>
         {
             Fsm = this,
             PrevState = Current,
@@ -116,17 +116,18 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
                 result = done;
         }
 
-        args.Result = result;
-
         if (_model.OnComplete != null)
+        {
+            args.Result = result;
             await _model.OnComplete(args).ConfigureAwait(false);
+        }
 
         return result;
     }
 
     public async Task<bool> JumpToAsync(TState next, object data = null, CancellationToken cancellationToken = default)
     {
-        var args = new FsmEnterExitArgs<TState, TEvent>
+        var args = new FsmJumpArgs<TState, TEvent>
         {
             Fsm = this,
             Data = data,
@@ -149,25 +150,40 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var currentModel = _model.States[Current];
+        _jump = true;
 
         if (_model.OnExit != null)
+        {
             await _model.OnExit(args).ConfigureAwait(false);
+            if (!_jump) return true;
+        }
+
+        var currentModel = _model.States[Current];
 
         if (currentModel.OnExit != null)
+        {
             await currentModel.OnExit(args).ConfigureAwait(false);
+            if (!_jump) return true;
+        }
 
-        lock (_locker)
-            Current = next;
+        Current = next;
 
         if (_model.OnEnter != null)
+        {
             await _model.OnEnter(args).ConfigureAwait(false);
+            if (!_jump) return true;
+        }
 
         if (nextModel.OnEnter != null)
+        {
             await nextModel.OnEnter(args).ConfigureAwait(false);
+            if (!_jump) return true;
+        }
 
         if (_model.OnJump != null)
             await _model.OnJump(args).ConfigureAwait(false);
+
+        _jump = false;
 
         return true;
     }
@@ -176,20 +192,17 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
 
     public async Task ResetToAsync(TState state, CancellationToken cancellationToken = default)
     {
-        var args = new FsmResetArgs<TState, TEvent>
-        {
-            Fsm = this,
-            PrevState = Current,
-            CancellationToken = cancellationToken,
-        };
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        lock (_locker)
-            Current = state;
+        var prevState = Current;
+        Current = state;
+        _jump = false;
 
         if (_model.OnReset != null)
-            await _model.OnReset(args).ConfigureAwait(false);
+            await _model.OnReset(new FsmEnterArgs<TState, TEvent>
+            {
+                Fsm = this,
+                PrevState = prevState,
+                CancellationToken = cancellationToken,
+            }).ConfigureAwait(false);
     }
 
     private Task OnError(FsmErrorArgs<TState, TEvent> args, string message, params object[] formatArgs)

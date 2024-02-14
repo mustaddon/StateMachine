@@ -16,8 +16,8 @@ public class FsmConfig<TState, TEvent>
     public FsmStateConfig<TState, TEvent> State(TState state)
         => Root.State(state);
 
-    public IStateMachine<TState, TEvent> Build()
-        => Root.Build();
+    public IStateMachine<TState, TEvent> Build(bool concurrent = false)
+        => Root.Build(concurrent);
 }
 
 public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
