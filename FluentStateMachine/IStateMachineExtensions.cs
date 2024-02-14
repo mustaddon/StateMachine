@@ -6,17 +6,16 @@ namespace FluentStateMachine;
 
 public static class IStateMachineExtensions
 {
-    public static Task<object> TriggerAsync<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, TEvent e, object data = default, CancellationToken cancellationToken = default)
-        where TEvent : IFsmEvent
-        => fsm.TriggerAsync<object>(e, data, cancellationToken);
-
-    public static Task<TResult> TriggerAsync<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default, CancellationToken cancellationToken = default)
+    public static Task<TResult> TriggerAsync<TState, TEvent, TData, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default, CancellationToken cancellationToken = default)
         where TEvent : IFsmEvent
         => fsm.TriggerAsync<TResult>((TEvent)e, data, cancellationToken);
 
-    public static TResult Trigger<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default)
+    public static TResult Trigger<TState, TEvent, TData, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default)
         where TEvent : IFsmEvent
         => TriggerAsync(fsm, e, data).Result;
+
+    public static Task<object> TriggerAsync<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, TEvent e, object data = default, CancellationToken cancellationToken = default)
+        => fsm.TriggerAsync<object>(e, data, cancellationToken);
 
     public static object Trigger<TState, TEvent, TResult>(this IStateMachine<TState, TEvent> fsm, TEvent e, object data = null)
         => fsm.TriggerAsync<TResult>(e, data).Result;

@@ -2,11 +2,11 @@
 using System;
 using System.Threading.Tasks;
 
-//using IEvent = ConsoleApp.EnumEvent;
-//using Events = ConsoleApp.EnumEvent;
+using IEvent = ConsoleApp.EnumEvent;
+using Events = ConsoleApp.EnumEvent;
 
-using IEvent = ConsoleApp.IAdvancedEvent;
-using Events = ConsoleApp.AdvancedEvent;
+//using IEvent = ConsoleApp.IAdvancedEvent;
+//using Events = ConsoleApp.AdvancedEvent;
 
 
 namespace ConsoleApp;
@@ -47,7 +47,7 @@ class Program
             .Build();
 
 
-        Console.WriteLine($"Result with cast: {await fsm.TriggerAsync(Events.E1, 100)}\n\n"); // for AdvancedEvents (not enum)
+        //Console.WriteLine($"Result with cast: {await fsm.TriggerAsync(Events.E1, 100)}\n\n"); // for AdvancedEvents (not enum)
 
 
         foreach (var (e, data) in new (IEvent, object)[] {

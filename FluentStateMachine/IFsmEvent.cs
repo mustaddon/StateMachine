@@ -4,7 +4,7 @@ public interface IFsmEvent
 {
 }
 
-public interface IFsmEvent<TArgs, TResult> : IFsmEvent
+public interface IFsmEvent<TData, TResult> : IFsmEvent
 {
 }
 
