@@ -6,6 +6,14 @@ namespace FluentStateMachine;
 
 public static class IStateMachineExtensions
 {
+    public static async Task<TResult> TriggerCastAsync<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default, CancellationToken cancellationToken = default)
+        where TEvent : IFsmEvent
+        => (TResult)await fsm.TriggerAsync((TEvent)e, data, cancellationToken).ConfigureAwait(false);
+
+    public static TResult TriggerCast<TState, TEvent, TArgs, TResult>(this IStateMachine<TState, TEvent> fsm, IFsmEvent<TArgs, TResult> e, TArgs data = default)
+        where TEvent : IFsmEvent
+        => TriggerCastAsync(fsm, e, data).Result;
+
     public static object Trigger<TState, TEvent>(this IStateMachine<TState, TEvent> fsm, TEvent e, object data = null)
         => fsm.TriggerAsync(e, data).Result;
 
