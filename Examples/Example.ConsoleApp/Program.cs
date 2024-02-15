@@ -2,11 +2,11 @@
 using System;
 using System.Threading.Tasks;
 
-using IEvent = ConsoleApp.EnumEvent;
-using Events = ConsoleApp.EnumEvent;
+//using IEvent = ConsoleApp.EnumEvent;
+//using Events = ConsoleApp.EnumEvent;
 
-//using IEvent = ConsoleApp.IAdvancedEvent;
-//using Events = ConsoleApp.AdvancedEvent;
+using IEvent = ConsoleApp.IAdvancedEvent;
+using Events = ConsoleApp.AdvancedEvent;
 
 
 namespace ConsoleApp;
@@ -25,30 +25,30 @@ class Program
             .OnEnter(x => Console.WriteLine($"Enter state {x.CurrentState} from {x.PrevState}"))
             .OnJump(x => Console.WriteLine($"On jump to {x.CurrentState} from {x.PrevState}"))
             .OnReset(x => Console.WriteLine($"On reset to {x.CurrentState} from {x.PrevState}"))
-            .On(Events.E0).Execute(x => "shared to all states")
+            .OnX(Events.E0).Execute(x => "shared to all states")
 
             .State(States.S1)
-                .On(Events.E1)
+                .OnX(Events.E1)
                     .Execute(x =>
                     {
                         Console.WriteLine($"Execute {x.CurrentState}>{x.Event} with args: {x.Data}");
                         return (int?)x.Data * 10; // some result
                     })
-                .On(Events.E2).JumpTo(States.S2)
-                .On(Events.E3).Execute(x => x.Data.ToString()).JumpTo(States.S3)
+                .OnX(Events.E2).JumpTo(States.S2)
+                .OnX(Events.E3).Execute(x => x.Data.ToString()).JumpTo(States.S3)
             .State(States.S2)
                 .Enable(async x => { await Task.Delay(500); return true; })
-                .On(Events.E1)
+                .OnX(Events.E1)
                     .Execute(x => (int?)x.Data * 100)
                     .JumpTo(async x => { await Task.Delay(500); return States.S1; })
             .State(States.S3)
                 .OnEnter(x => Console.WriteLine($"Final state"))
-                .On(Events.E0).Execute(x => "overridden shared event !!!")
+                .OnX(Events.E0).Execute(x => "overridden shared event !!!")
             .Build();
 
 
         Console.WriteLine($"Result casting: {await fsm.TriggerAsync<int?>(Events.E1, 100)}\n\n");
-        //Console.WriteLine($"Result auto casting: {await fsm.TriggerAsyncX(Events.E1, 200)}\n\n"); // only for AdvancedEvent : IFsmEvent
+        Console.WriteLine($"Result auto casting: {await fsm.TriggerAsyncX(Events.E1, 200)}\n\n"); // only for AdvancedEvent : IFsmEvent
 
 
         foreach (var (e, data) in new (IEvent, object)[] {

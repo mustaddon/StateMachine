@@ -15,6 +15,8 @@ public static class IStateMachineExtensions
     public static object Trigger<TEvent>(this IEventController<TEvent> fsm, TEvent e, object data = null)
         => fsm.TriggerAsync<object>(e, data).Result;
 
+
+
     public static bool JumpTo<TState>(this IStateController<TState> fsm, TState state, object data = null)
         => fsm.JumpToAsync(state, data).Result;
 
@@ -22,7 +24,9 @@ public static class IStateMachineExtensions
         => fsm.ResetToAsync(state).Wait();
 
     public static void Reset(this IStateMachine fsm)
-    => fsm.ResetAsync().Wait();
+        => fsm.ResetAsync().Wait();
+
+
 
     public static bool IsAvailableState<TState>(this IStateController<TState> fsm, TState value, object data = null)
         => fsm.IsAvailableStateAsync(value, data).Result;
@@ -35,6 +39,8 @@ public static class IStateMachineExtensions
 
     public static ICollection<TEvent> GetAvailableEvents<TEvent>(this IEventController<TEvent> fsm, object data = null)
         => fsm.GetAvailableEventsAsync(data).Result;
+
+
 
     public static async Task<ICollection<TState>> GetAvailableStatesAsync<TState>(this IStateController<TState> fsm, object data = null, CancellationToken cancellationToken = default)
     {
@@ -67,12 +73,4 @@ public static class IStateMachineExtensions
     public static TResult TriggerX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default)
         where TEvent : IFsmEvent
         => fsm.TriggerAsync<TResult>((TEvent)e, data).Result;
-
-    public static Task<object> TriggerAsyncX<TEvent>(this IEventController<TEvent> fsm, IFsmEvent e, object data = null, CancellationToken cancellationToken = default)
-        where TEvent : IFsmEvent
-        => fsm.TriggerAsync<object>((TEvent)e, data, cancellationToken);
-
-    public static object TriggerX<TEvent>(this IEventController<TEvent> fsm, IFsmEvent e, object data = null, CancellationToken cancellationToken = default)
-        where TEvent : IFsmEvent
-        => fsm.TriggerAsync<object>((TEvent)e, data, cancellationToken).Result;
 }
