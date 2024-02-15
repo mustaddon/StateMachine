@@ -30,6 +30,7 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
     internal readonly FsmStateModel<TState, TEvent> Model;
 
+    public FsmEventConfig<TState, TEvent, TData, object> On<TData>(TEvent e) => On<TData, object>(e);
     public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>(TEvent e)
     {
         if (!Model.Events.TryGetValue(e, out var eventModel))

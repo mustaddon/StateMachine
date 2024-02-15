@@ -1,70 +1,15 @@
-﻿using FluentStateMachine;
+﻿using Example.ConsoleApp;
 using System;
 using System.Threading.Tasks;
-
-//using IEvent = ConsoleApp.EnumEvent;
-//using Events = ConsoleApp.EnumEvent;
-
-using IEvent = ConsoleApp.IAdvancedEvent;
-using Events = ConsoleApp.AdvancedEvent;
 
 
 namespace ConsoleApp;
 
 class Program
 {
-    enum States { S1, S2, S3 }
-
     static async Task Main()
     {
-        var fsm = new FsmBuilder<States, IEvent>(States.S1)
-            .OnError(x => Console.WriteLine($"On error {x.CurrentState}: {x.Error}"))
-            .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
-            .OnComplete(x => Console.WriteLine($"On complete (triggered and state{(x.CurrentState == x.PrevState ? " NOT " : " ")}changed)"))
-            .OnExit(x => Console.WriteLine($"Exit state {x.CurrentState} to {x.NextState}"))
-            .OnEnter(x => Console.WriteLine($"Enter state {x.CurrentState} from {x.PrevState}"))
-            .OnJump(x => Console.WriteLine($"On jump to {x.CurrentState} from {x.PrevState}"))
-            .OnReset(x => Console.WriteLine($"On reset to {x.CurrentState} from {x.PrevState}"))
-            .OnX(Events.E0).Execute(x => "shared to all states")
-
-            .State(States.S1)
-                .OnX(Events.E1)
-                    .Execute(x =>
-                    {
-                        Console.WriteLine($"Execute {x.CurrentState}>{x.Event} with args: {x.Data}");
-                        return (int?)x.Data * 10; // some result
-                    })
-                .OnX(Events.E2).JumpTo(States.S2)
-                .OnX(Events.E3).Execute(x => x.Data.ToString()).JumpTo(States.S3)
-            .State(States.S2)
-                .Enable(async x => { await Task.Delay(500); return true; })
-                .OnX(Events.E1)
-                    .Execute(x => (int?)x.Data * 100)
-                    .JumpTo(async x => { await Task.Delay(500); return States.S1; })
-            .State(States.S3)
-                .OnEnter(x => Console.WriteLine($"Final state"))
-                .OnX(Events.E0).Execute(x => "overridden shared event !!!")
-            .Build();
-
-
-        Console.WriteLine($"Result casting: {await fsm.TriggerAsync<int?>(Events.E1, 100)}\n\n");
-        Console.WriteLine($"Result auto casting: {await fsm.TriggerAsyncX(Events.E1, 200)}\n\n"); // only for AdvancedEvent : IFsmEvent
-
-
-        foreach (var (e, data) in new (IEvent, object)[] {
-            (Events.E1, 555),
-            (Events.E2, null),
-            (Events.E0, null),
-            (Events.E1, 777),
-            (Events.E3, (999, "test tuple")),
-            (Events.E0, null)
-        })
-        {
-            Console.WriteLine($"Current state: {fsm.Current}");
-            Console.WriteLine($"Available events: {string.Join(", ", fsm.GetAvailableEvents(data))}");
-            Console.WriteLine($"Result: {await fsm.TriggerAsync(e, data)}\n\n");
-        }
-
-        await fsm.ResetAsync();
+        await SimpleExample.Run();
+        await AdvancedExample.Run();
     }
 }

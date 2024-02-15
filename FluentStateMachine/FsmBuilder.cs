@@ -64,6 +64,7 @@ public class FsmBuilder<TState, TEvent>
         return this;
     }
 
+    public FsmEventConfig<TState, TEvent, TData, object> On<TData>(TEvent e) => On<TData, object>(e);
     public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>(TEvent e)
     {
         if (!_model.Events.TryGetValue(e, out var eventModel))
