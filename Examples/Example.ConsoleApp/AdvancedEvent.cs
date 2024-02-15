@@ -9,6 +9,7 @@ public static class AdvancedEvent
     public static readonly AdvancedEvent<int?, int?> E1 = new(1, "Event-1");
     public static readonly AdvancedEvent<object, bool> E2 = new(2, "Event-2");
     public static readonly AdvancedEvent<(int Arg1, string Arg2), string> E3 = new(3, "Event-3");
+    public static readonly AdvancedEvent<int, object> E4 = new(4, "Event-4");
 }
 
 public class AdvancedEvent<TData, TResult>(int id, string name) : IAdvancedEvent, IFsmEvent<TData, TResult>

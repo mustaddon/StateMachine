@@ -30,12 +30,12 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
     internal readonly FsmStateModel<TState, TEvent> Model;
 
-    public FsmEventConfig<TState, TEvent, TData> On<TData>(TEvent e)
+    public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>(TEvent e)
     {
         if (!Model.Events.TryGetValue(e, out var eventModel))
             Model.Events.Add(e, eventModel = new());
 
-        return new FsmEventConfig<TState, TEvent, TData>(Root, eventModel, this);
+        return new FsmEventConfig<TState, TEvent, TData, TResult>(Root, eventModel, this);
     }
 
     public FsmStateConfig<TState, TEvent> OnEnter(Func<IFsmEnterArgs<TState, TEvent>, Task> action)
@@ -57,7 +57,7 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
     }
 }
 
-public class FsmEventConfig<TState, TEvent, TData> : FsmConfig<TState, TEvent>
+public class FsmEventConfig<TState, TEvent, TData, TResult> : FsmConfig<TState, TEvent>
 {
     internal FsmEventConfig(FsmBuilder<TState, TEvent> root, FsmEventModel<TState, TEvent> model, FsmStateConfig<TState, TEvent> parent = null)
         : base(root)
@@ -70,28 +70,30 @@ public class FsmEventConfig<TState, TEvent, TData> : FsmConfig<TState, TEvent>
 
     internal readonly FsmStateConfig<TState, TEvent> Parent;
 
-    public FsmEventConfig<TState, TEvent, T> On<T>(TEvent e) => Parent != null ? Parent.On<T>(e) : Root.On<T>(e);
+    public FsmEventConfig<TState, TEvent, TArgsData, object> On<TArgsData>(TEvent e) => On<TArgsData, object>(e);
+    public FsmEventConfig<TState, TEvent, TArgsData, TExecuteResult> On<TArgsData, TExecuteResult>(TEvent e) 
+        => Parent != null ? Parent.On<TArgsData, TExecuteResult>(e) : Root.On<TArgsData, TExecuteResult>(e);
 
-    public FsmEventConfig<TState, TEvent, TData> Execute(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task> fn)
+    internal FsmEventConfig<TState, TEvent, TData, TResult> Execute(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task> fn)
     {
         Model.Execute = Cast(fn);
         return this;
     }
 
-    public FsmEventConfig<TState, TEvent, TData> Execute<TResult>(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task<TResult>> fn)
+    public FsmEventConfig<TState, TEvent, TData, TResult> Execute(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task<TResult>> fn)
     {
         Model.Execute = Cast(fn);
         return this;
     }
 
-    public FsmEventConfig<TState, TEvent, TData> Enable(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task<bool>> fn)
+    public FsmEventConfig<TState, TEvent, TData, TResult> Enable(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task<bool>> fn)
     {
 
         Model.Enable = Cast(fn);
         return this;
     }
 
-    public FsmEventConfig<TState, TEvent, TData> JumpTo(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task<TState>> fn)
+    public FsmEventConfig<TState, TEvent, TData, TResult> JumpTo(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task<TState>> fn)
     {
         Model.JumpTo = Cast(fn);
         return this;
