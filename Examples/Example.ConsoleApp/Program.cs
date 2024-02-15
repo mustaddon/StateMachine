@@ -18,20 +18,20 @@ class Program
     static async Task Main()
     {
         var fsm = new FsmBuilder<States, IEvent>(States.S1)
-            .OnError(x => Console.WriteLine($"On error {x.Fsm.Current}: {x.Error}"))
+            .OnError(x => Console.WriteLine($"On error {x.CurrentState}: {x.Error}"))
             .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
-            .OnComplete(x => Console.WriteLine($"On complete (triggered and state{(x.Fsm.Current == x.PrevState ? " NOT " : " ")}changed)"))
-            .OnExit(x => Console.WriteLine($"Exit state {x.Fsm.Current} to {x.NextState}"))
-            .OnEnter(x => Console.WriteLine($"Enter state {x.Fsm.Current} from {x.PrevState}"))
-            .OnJump(x => Console.WriteLine($"On jump to {x.Fsm.Current} from {x.PrevState}"))
-            .OnReset(x => Console.WriteLine($"On reset to {x.Fsm.Current} from {x.PrevState}"))
+            .OnComplete(x => Console.WriteLine($"On complete (triggered and state{(x.CurrentState == x.PrevState ? " NOT " : " ")}changed)"))
+            .OnExit(x => Console.WriteLine($"Exit state {x.CurrentState} to {x.NextState}"))
+            .OnEnter(x => Console.WriteLine($"Enter state {x.CurrentState} from {x.PrevState}"))
+            .OnJump(x => Console.WriteLine($"On jump to {x.CurrentState} from {x.PrevState}"))
+            .OnReset(x => Console.WriteLine($"On reset to {x.CurrentState} from {x.PrevState}"))
             .On(Events.E0).Execute(x => "shared to all states")
 
             .State(States.S1)
                 .On(Events.E1)
                     .Execute(x =>
                     {
-                        Console.WriteLine($"Execute {x.Fsm.Current}>{x.Event} with args: {x.Data}");
+                        Console.WriteLine($"Execute {x.CurrentState}>{x.Event} with args: {x.Data}");
                         return (int?)x.Data * 10; // some result
                     })
                 .On(Events.E2).JumpTo(States.S2)
@@ -47,7 +47,8 @@ class Program
             .Build();
 
 
-        //Console.WriteLine($"Result with cast: {await fsm.TriggerAsync(Events.E1, 100)}\n\n"); // for AdvancedEvents (not enum)
+        Console.WriteLine($"Result casting: {await fsm.TriggerAsync<int?>(Events.E1, 100)}\n\n");
+        //Console.WriteLine($"Result auto casting: {await fsm.TriggerAsyncX(Events.E1, 200)}\n\n"); // only for AdvancedEvent : IFsmEvent
 
 
         foreach (var (e, data) in new (IEvent, object)[] {

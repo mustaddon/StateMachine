@@ -6,29 +6,29 @@ public interface IFsmArgs<TState, TEvent>
 {
     IStateMachine<TState, TEvent> Fsm { get; }
     CancellationToken CancellationToken { get; }
+    TState CurrentState { get; }
 }
 
-public interface IFsmDataArgs<TState, TEvent> : IFsmArgs<TState, TEvent>
+public interface IFsmDataArgs<TState, TEvent, TData> : IFsmArgs<TState, TEvent>
 {
-    object Data { get; }
+    TData Data { get; }
 }
 
-public interface IFsmEnterArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent>, IFsmPrevStateArg<TState>
-{
+public interface IFsmEnterArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent, object>, IFsmPrevStateArg<TState>;
 
-}
-
-public interface IFsmExitArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent>
+public interface IFsmExitArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent, object>
 {
     TState NextState { get; }
 }
 
-public interface IFsmErrorArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent>
+public interface IFsmErrorArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent, object>
 {
     string Error { get; }
 }
 
-public interface IFsmTriggerArgs<TState, TEvent> : IFsmDataArgs<TState, TEvent>
+public interface IFsmTriggerArgs<TState, TEvent> : IFsmTriggerArgs<TState, TEvent, object>;
+
+public interface IFsmTriggerArgs<TState, TEvent, TData> : IFsmDataArgs<TState, TEvent, TData>
 {
     TEvent Event { get; }
 }

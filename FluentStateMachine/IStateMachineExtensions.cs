@@ -6,14 +6,6 @@ namespace FluentStateMachine;
 
 public static class IStateMachineExtensions
 {
-    public static Task<TResult> TriggerAsync<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default, CancellationToken cancellationToken = default)
-        where TEvent : IFsmEvent
-        => fsm.TriggerAsync<TResult>((TEvent)e, data, cancellationToken);
-
-    public static TResult Trigger<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default)
-        where TEvent : IFsmEvent
-        => TriggerAsync(fsm, e, data).Result;
-
     public static Task<object> TriggerAsync<TEvent>(this IEventController<TEvent> fsm, TEvent e, object data = default, CancellationToken cancellationToken = default)
         => fsm.TriggerAsync<object>(e, data, cancellationToken);
 
@@ -65,4 +57,22 @@ public static class IStateMachineExtensions
 
         return result;
     }
+
+
+
+    public static Task<TResult> TriggerAsyncX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default, CancellationToken cancellationToken = default)
+        where TEvent : IFsmEvent
+        => fsm.TriggerAsync<TResult>((TEvent)e, data, cancellationToken);
+
+    public static TResult TriggerX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default)
+        where TEvent : IFsmEvent
+        => fsm.TriggerAsync<TResult>((TEvent)e, data).Result;
+
+    public static Task<object> TriggerAsyncX<TEvent>(this IEventController<TEvent> fsm, IFsmEvent e, object data = null, CancellationToken cancellationToken = default)
+        where TEvent : IFsmEvent
+        => fsm.TriggerAsync<object>((TEvent)e, data, cancellationToken);
+
+    public static object TriggerX<TEvent>(this IEventController<TEvent> fsm, IFsmEvent e, object data = null, CancellationToken cancellationToken = default)
+        where TEvent : IFsmEvent
+        => fsm.TriggerAsync<object>((TEvent)e, data, cancellationToken).Result;
 }

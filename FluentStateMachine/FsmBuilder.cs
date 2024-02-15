@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 namespace FluentStateMachine;
 
 public class FsmBuilder<TState, TEvent>
+    where TState : notnull
+    where TEvent : notnull
 {
     public FsmBuilder(TState start)
     {
@@ -62,12 +64,12 @@ public class FsmBuilder<TState, TEvent>
         return this;
     }
 
-    public FsmEventConfig<TState, TEvent> On(TEvent e)
+    public FsmEventConfig<TState, TEvent, TData> On<TData>(TEvent e)
     {
         if (!_model.Events.TryGetValue(e, out var eventModel))
             _model.Events.Add(e, eventModel = new());
 
-        return new FsmEventConfig<TState, TEvent>(this, eventModel);
+        return new FsmEventConfig<TState, TEvent, TData>(this, eventModel);
     }
 
     public FsmStateConfig<TState, TEvent> State(TState state)

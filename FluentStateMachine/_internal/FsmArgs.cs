@@ -6,9 +6,10 @@ internal class FsmArgs<TState, TEvent> : IFsmArgs<TState, TEvent>
 {
     public IStateMachine<TState, TEvent> Fsm { get; internal set; }
     public CancellationToken CancellationToken { get; internal set; }
+    public TState CurrentState => Fsm.Current;
 }
 
-internal class FsmDataArgs<TState, TEvent> : FsmArgs<TState, TEvent>, IFsmDataArgs<TState, TEvent>
+internal class FsmDataArgs<TState, TEvent> : FsmArgs<TState, TEvent>, IFsmDataArgs<TState, TEvent, object>
 {
     public object Data { get; internal set; }
 }
