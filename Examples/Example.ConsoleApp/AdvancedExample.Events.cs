@@ -17,9 +17,10 @@ public class AdvancedEvent<TData, TResult>(int id, string? name = null) : Advanc
 public abstract class AdvancedEventBase(int id, string? name = null) : IAdvancedEvent
 {
     public int Id { get; } = id;
+    public string Name { get; } = name ?? $"Event-{id}";
     public override int GetHashCode() => Id;
     public override bool Equals(object? obj) => obj is IAdvancedEvent e ? e.Id == Id : obj is int id && id == Id;
-    public override string ToString() => name ?? $"Event-{Id}";
+    public override string ToString() => Name;
 }
 
 public interface IAdvancedEvent : IFsmEvent
