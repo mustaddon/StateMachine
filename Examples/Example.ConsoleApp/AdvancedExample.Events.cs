@@ -26,4 +26,5 @@ public abstract class AdvancedEventBase(int id, string? name = null) : IAdvanced
 public interface IAdvancedEvent : IFsmEvent
 {
     int Id { get; }
+    string Name { get; }
 }
