@@ -18,7 +18,7 @@ public class AdvancedEvent<TData, TResult>(int id, string name) : IAdvancedEvent
     public int Id { get; } = id;
     public string Name { get; } = name;
     public override int GetHashCode() => Id;
-    public override bool Equals(object obj) => obj is IAdvancedEvent e ? e.Id == Id : obj is int id && id == Id;
+    public override bool Equals(object? obj) => obj is IAdvancedEvent e ? e.Id == Id : obj is int id && id == Id;
     public override string ToString() => Name;
 }
 

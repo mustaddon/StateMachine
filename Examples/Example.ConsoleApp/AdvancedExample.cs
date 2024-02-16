@@ -44,7 +44,7 @@ internal class AdvancedExample
         Console.WriteLine($"Check args type and cast results: {await fsm.TriggerAsyncX(AdvancedEvents.E1, 10)}\n\n");
 
 
-        foreach (var (e, data) in new (IAdvancedEvent, object)[] {
+        foreach (var (e, data) in new (IAdvancedEvent, object?)[] {
             (AdvancedEvents.E2, null),
             (AdvancedEvents.E0, null),
             (AdvancedEvents.E1, 555),

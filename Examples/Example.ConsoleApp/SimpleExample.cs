@@ -47,7 +47,7 @@ internal class SimpleExample
         Console.WriteLine($"Cast results: {await fsm.TriggerAsync<int?>(Events.E1, 10)}\n\n");
 
 
-        foreach (var (e, data) in new (Events, object)[] {
+        foreach (var (e, data) in new (Events, object?)[] {
             (Events.E2, null),
             (Events.E0, null),
             (Events.E1, 555),
