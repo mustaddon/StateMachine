@@ -9,7 +9,7 @@ internal class FsmTriggerArgsCast<TState, TEvent, TData>(IFsmTriggerArgs<TState,
 
     public IStateMachine<TState, TEvent> Fsm => _args.Fsm;
     public CancellationToken CancellationToken => _args.CancellationToken;
-    public TState CurrentState => _args.CurrentState;
+    public TState State => _args.State;
     public TEvent Event => _args.Event;
     public TData Data => (TData)_args.Data;
 }

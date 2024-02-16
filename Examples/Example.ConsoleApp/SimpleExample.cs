@@ -15,20 +15,20 @@ internal class SimpleExample
         Console.WriteLine($"=== SimpleExample Start ===\n");
 
         var fsm = new FsmBuilder<States, Events>(States.S1)
-            .OnError(x => Console.WriteLine($"On error {x.CurrentState}: {x.Error}"))
-            .OnTrigger(x => Console.WriteLine($"On trigger {x.Event}"))
-            .OnComplete(x => Console.WriteLine($"On complete (triggered and state{(x.CurrentState == x.PrevState ? " NOT " : " ")}changed)"))
-            .OnExit(x => Console.WriteLine($"Exit state {x.CurrentState} to {x.NextState}"))
-            .OnEnter(x => Console.WriteLine($"Enter state {x.CurrentState} from {x.PrevState}"))
-            .OnJump(x => Console.WriteLine($"On jump to {x.CurrentState} from {x.PrevState}"))
-            .OnReset(x => Console.WriteLine($"On reset to {x.CurrentState} from {x.PrevState}"))
+            .OnError(x => Console.WriteLine($"{x.Event}: On error ({x.Error})"))
+            .OnTrigger(x => Console.WriteLine($"{x.Event}: On trigger"))
+            .OnComplete(x => Console.WriteLine($"{x.Event}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
+            .OnExit(x => Console.WriteLine($"{x.Event}: Exit state {x.State} to {x.NextState}"))
+            .OnEnter(x => Console.WriteLine($"{x.Event}: Enter state {x.State} from {x.PrevState}"))
+            .OnJump(x => Console.WriteLine($"{x.Event}: On jump to {x.State} from {x.PrevState}"))
+            .OnReset(x => Console.WriteLine($"Reset to {x.State} from {x.PrevState}"))
             .On(Events.E0).Execute(x => "shared to all states")
 
             .State(States.S1)
                 .On(Events.E1)
                     .Execute(x =>
                     {
-                        Console.WriteLine($"Execute {x.CurrentState}>{x.Event} with args: {x.Data}");
+                        Console.WriteLine($"{x.Event}: Execute with args: {x.Data}");
                         return (int)x.Data * 10; // some result
                     })
                 .On(Events.E2).JumpTo(States.S2)
@@ -39,8 +39,8 @@ internal class SimpleExample
                     .Execute(x => x.Data * 100)
                     .JumpTo(async x => { await Task.Delay(x.Data); return States.S1; })
             .State(States.S3)
-                .OnEnter(x => Console.WriteLine($"Final state"))
-                .On(Events.E0).Execute(x => "overridden shared event !!!")
+                .OnEnter(x => Console.WriteLine($"{x.Event}: Final state !!!"))
+                .On(Events.E0).Execute(x => $"overridden shared result !!!")
             .Build();
 
 
@@ -48,11 +48,10 @@ internal class SimpleExample
 
 
         foreach (var (e, data) in new (Events, object)[] {
-            (Events.E1, 555),
             (Events.E2, null),
             (Events.E0, null),
-            (Events.E1, 777),
-            (Events.E3, (999, "test tuple")),
+            (Events.E1, 555),
+            (Events.E3, (777, "test tuple")),
             (Events.E0, null)
         })
         {

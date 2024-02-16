@@ -18,6 +18,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
     private bool _jump = false;
 
     public TState Current { get; private set; }
+    public TEvent LastEvent { get; private set; }
 
     public ICollection<TState> States => _model.States.Keys;
 
@@ -36,9 +37,8 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (stateModel.Enable == null)
             return Task.FromResult(true);
 
-        return stateModel.Enable(new FsmEnterArgs<TState, TEvent>
+        return stateModel.Enable(new FsmEnterArgs<TState, TEvent>(this)
         {
-            Fsm = this,
             PrevState = Current,
             Data = data,
             CancellationToken = cancellationToken,
@@ -54,9 +54,8 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (eventModel.Enable == null)
             return Task.FromResult(true);
 
-        return eventModel.Enable(new FsmTriggerArgs<TState, TEvent>
+        return eventModel.Enable(new FsmTriggerArgs<TState, TEvent>(this, value)
         {
-            Fsm = this,
             Data = data,
             CancellationToken = cancellationToken,
         });
@@ -65,10 +64,8 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
 
     public async Task<TResult> TriggerAsync<TResult>(TEvent e, object data = null, CancellationToken cancellationToken = default)
     {
-        var args = new FsmCompleteArgs<TState, TEvent>
+        var args = new FsmCompleteArgs<TState, TEvent>(this, e)
         {
-            Fsm = this,
-            Event = e,
             Data = data,
             CancellationToken = cancellationToken,
             PrevState = Current,
@@ -92,6 +89,8 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         }
 
         cancellationToken.ThrowIfCancellationRequested();
+
+        LastEvent = e;
 
         if (_model.OnFire != null)
             await _model.OnFire(args).ConfigureAwait(false);
@@ -124,9 +123,8 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
 
     public async Task<bool> JumpToAsync(TState next, object data = null, CancellationToken cancellationToken = default)
     {
-        var args = new FsmJumpArgs<TState, TEvent>
+        var args = new FsmJumpArgs<TState, TEvent>(this)
         {
-            Fsm = this,
             Data = data,
             CancellationToken = cancellationToken,
             PrevState = Current,
@@ -194,12 +192,13 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         _jump = false;
 
         if (_model.OnReset != null)
-            await _model.OnReset(new FsmEnterArgs<TState, TEvent>
+            await _model.OnReset(new FsmEnterArgs<TState, TEvent>(this)
             {
-                Fsm = this,
                 PrevState = prevState,
                 CancellationToken = cancellationToken,
             }).ConfigureAwait(false);
+
+        LastEvent = default;
     }
 
     private Task OnError(FsmErrorArgs<TState, TEvent> args, string message, params object[] formatArgs)
