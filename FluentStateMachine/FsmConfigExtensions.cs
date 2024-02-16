@@ -45,17 +45,6 @@ public static class FsmConfigExtensions
 
 
 
-    public static FsmEventConfig<TState, TEvent, object, object> On<TState, TEvent>(this FsmBuilder<TState, TEvent> cfg, TEvent e)
-        => cfg.On<object, object>(e);
-
-    public static FsmEventConfig<TState, TEvent, object, object> On<TState, TEvent>(this FsmStateConfig<TState, TEvent> cfg, TEvent e)
-        => cfg.On<object, object>(e);
-
-    public static FsmEventConfig<TState, TEvent, object, object> On<TState, TEvent, TData, TResult>(this FsmEventConfig<TState, TEvent, TData, TResult> cfg, TEvent e)
-        => cfg.On<object, object>(e);
-
-
-
     public static FsmEventConfig<TState, TEvent, TData, TResult> OnX<TState, TEvent, TData, TResult>(this FsmBuilder<TState, TEvent> cfg, IFsmEvent<TData, TResult> e)
         where TEvent : IFsmEvent
         => cfg.On<TData, TResult>((TEvent)e);

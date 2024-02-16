@@ -30,6 +30,7 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
     internal readonly FsmStateModel<TState, TEvent> Model;
 
+    public FsmEventConfig<TState, TEvent, object, object> On(TEvent e) => On<object, object>(e);
     public FsmEventConfig<TState, TEvent, TData, object> On<TData>(TEvent e) => On<TData, object>(e);
     public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>(TEvent e)
     {
@@ -71,6 +72,7 @@ public class FsmEventConfig<TState, TEvent, TData, TResult> : FsmConfig<TState, 
 
     internal readonly FsmStateConfig<TState, TEvent> Parent;
 
+    public FsmEventConfig<TState, TEvent, object, object> On(TEvent e) => On<object, object>(e);
     public FsmEventConfig<TState, TEvent, TArgsData, object> On<TArgsData>(TEvent e) => On<TArgsData, object>(e);
     public FsmEventConfig<TState, TEvent, TArgsData, TExecuteResult> On<TArgsData, TExecuteResult>(TEvent e) 
         => Parent != null ? Parent.On<TArgsData, TExecuteResult>(e) : Root.On<TArgsData, TExecuteResult>(e);

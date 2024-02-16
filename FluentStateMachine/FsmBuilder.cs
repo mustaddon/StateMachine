@@ -64,6 +64,7 @@ public class FsmBuilder<TState, TEvent>
         return this;
     }
 
+    public FsmEventConfig<TState, TEvent, object, object> On(TEvent e) => On<object, object>(e);
     public FsmEventConfig<TState, TEvent, TData, object> On<TData>(TEvent e) => On<TData, object>(e);
     public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>(TEvent e)
     {
