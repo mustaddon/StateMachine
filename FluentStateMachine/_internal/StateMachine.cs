@@ -102,7 +102,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
             var executeTask = eventModel.Execute(args);
             await executeTask.ConfigureAwait(false);
 
-            if (eventModel.Execute.Method.ReturnType.IsGenericType)
+            if (eventModel.Execute.Method.ReturnType.IsGenericType || executeTask.IsGeneric())
                 result = executeTask.GetResult<TResult>();
         }
 

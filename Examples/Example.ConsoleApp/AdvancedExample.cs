@@ -30,7 +30,7 @@ internal class AdvancedExample
                 .OnX(AdvancedEvents.E2).JumpTo(States.S2)
                 .OnX(AdvancedEvents.E3).Execute(x => x.Data.ToString()).JumpTo(States.S3)
             .State(States.S2)
-                //.OnEnter(x => x.Fsm.JumpTo(States.S3)) // skip state test
+                //.OnEnter(x => x.Fsm.JumpTo(States.S3)) // test skip state
                 .Enable(async x => { await Task.Delay(500); return true; })
                 .OnX(AdvancedEvents.E1)
                     .Execute(x => x.Data * 100)
@@ -43,17 +43,18 @@ internal class AdvancedExample
 
         Console.WriteLine($"Check args type and cast results: {await fsm.TriggerAsyncX(AdvancedEvents.E1, 10)}\n\n");
 
-
-        foreach (var (e, data) in new (IAdvancedEvent, object?)[] {
+        var testEvents = new (IAdvancedEvent, object?)[] {
             (AdvancedEvents.E2, null),
             (AdvancedEvents.E0, null),
             (AdvancedEvents.E1, 555),
             (AdvancedEvents.E3, (777, "test tuple")),
             (AdvancedEvents.E0, null)
-        })
+        };
+
+        foreach (var (e, data) in testEvents)
         {
             Console.WriteLine($"Current state: {fsm.Current}");
-            Console.WriteLine($"Available events: {string.Join(", ", fsm.GetAvailableEvents(data))}");
+            Console.WriteLine($"Available events: {string.Join(", ", await fsm.GetAvailableEventsAsync(data))}");
             Console.WriteLine($"Result: {await fsm.TriggerAsync(e, data)}\n\n");
         }
 

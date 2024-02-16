@@ -66,6 +66,18 @@ public static class IStateMachineExtensions
 
 
 
+    public static Task<TResult> TriggerAsyncX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEventData<TData, TResult> e, CancellationToken cancellationToken = default)
+        where TEvent : IFsmEvent
+        where TData : IFsmEvent
+        => fsm.TriggerAsync<TResult>((TEvent)e, e, cancellationToken);
+
+    public static TResult TriggerX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEventData<TData, TResult> e)
+        where TEvent : IFsmEvent
+        where TData : IFsmEvent
+        => fsm.TriggerAsync<TResult>((TEvent)e, e).Result;
+
+
+
     public static Task<TResult> TriggerAsyncX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default, CancellationToken cancellationToken = default)
         where TEvent : IFsmEvent
         => fsm.TriggerAsync<TResult>((TEvent)e, data, cancellationToken);

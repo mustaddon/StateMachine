@@ -1,5 +1,5 @@
 # FluentStateMachine [![NuGet version](https://badge.fury.io/nu/FluentStateMachine.svg)](http://badge.fury.io/nu/FluentStateMachine)
-Finite-state machine (FSM) with a fluent interface
+Finite-state machine (FSM) with a fluent interface and mediators compatibility
 
 ## Example
 ```C#

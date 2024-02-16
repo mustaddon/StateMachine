@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Example.ConsoleApp;
 
-enum States { S1, S2, S3 }
-enum Events { E0, E1, E2, E3 }
+public enum States { S1, S2, S3 }
+public enum Events { E0, E1, E2, E3 }
 
 internal class SimpleExample
 {
@@ -46,17 +46,18 @@ internal class SimpleExample
 
         Console.WriteLine($"Cast results: {await fsm.TriggerAsync<int?>(Events.E1, 10)}\n\n");
 
-
-        foreach (var (e, data) in new (Events, object?)[] {
+        var testEvents = new (Events, object?)[] {
             (Events.E2, null),
             (Events.E0, null),
             (Events.E1, 555),
             (Events.E3, (777, "test tuple")),
             (Events.E0, null)
-        })
+        };
+
+        foreach (var (e, data) in testEvents)
         {
             Console.WriteLine($"Current state: {fsm.Current}");
-            Console.WriteLine($"Available events: {string.Join(", ", fsm.GetAvailableEvents(data))}");
+            Console.WriteLine($"Available events: {string.Join(", ", await fsm.GetAvailableEventsAsync(data))}");
             Console.WriteLine($"Result: {await fsm.TriggerAsync(e, data)}\n\n");
         }
 

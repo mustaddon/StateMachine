@@ -5,9 +5,9 @@
 	<LangVersion>latest</LangVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\FluentStateMachine.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>1.5.1</AssemblyVersion>
-    <FileVersion>1.5.1</FileVersion>
-    <Version>1.5.1</Version>
+    <AssemblyVersion>1.6.0</AssemblyVersion>
+    <FileVersion>1.6.0</FileVersion>
+    <Version>1.6.0</Version>
     
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
@@ -15,8 +15,8 @@
     <PackageId>FluentStateMachine</PackageId>
     <Product>FluentStateMachine</Product>
     <Title>FluentStateMachine</Title>
-    <Description>Finite-state machine (FSM) with a fluent interface</Description>
-    <PackageTags>fluent statemachine state-machine finitestatemachine finite-state-machine fsm fluent-interface</PackageTags>
+    <Description>Finite-state machine (FSM) with a fluent interface and mediators compatibility</Description>
+    <PackageTags>fluent-statemachine finite-state-machine state-machine fsm fluent-interface mediator-compatible mediatr</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mustaddon/StateMachine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/StateMachine</RepositoryUrl>
