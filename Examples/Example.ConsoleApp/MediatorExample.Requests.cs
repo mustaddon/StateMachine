@@ -1,30 +1,27 @@
-﻿using FluentStateMachine;
-using MediatR;
+﻿namespace Example.ConsoleApp;
 
-namespace Example.ConsoleApp;
+public interface IUnifiedRequest<TResult> : MediatR.IRequest<TResult>,  FluentStateMachine.IFsmEvent<TResult>;
 
-public class MediatorRequest0 : IFsmEvent<MediatorRequest0, object>, IRequest<object>
-{
 
-}
+public class MediatorRequest0 : IUnifiedRequest<object>;
 
-public class MediatorRequest1 : IFsmEvent<MediatorRequest1, double>, IRequest<double>
+public class MediatorRequest1 : IUnifiedRequest<double>
 {
     public int Num { get; set; }
 }
 
-public class MediatorRequest2 : IFsmEvent<MediatorRequest2, object>, IRequest<object>
+public class MediatorRequest2 : IUnifiedRequest<object>
 {
     public bool Bit { get; set; }
 }
 
-public class MediatorRequest3 : IFsmEvent<MediatorRequest3, string>, IRequest<string>
+public class MediatorRequest3 : IUnifiedRequest<string>
 {
     public int Num { get; set; }
     public string? Text { get; set; }
 }
 
-public class MediatorRequest4 : IFsmEvent<MediatorRequest4, object>, IRequest<object>
+public class MediatorRequest4 : IUnifiedRequest<object>
 {
     public int Num { get; set; }
 }

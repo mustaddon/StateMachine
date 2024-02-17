@@ -91,18 +91,14 @@ public static class IStateMachineExtensions
 
 
 
-    public static Task<TResult> TriggerAsync<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e, CancellationToken cancellationToken = default)
-        where TData : IFsmEvent
+    public static Task<TResult> TriggerAsync<TResult>(this IEventController<Type> fsm, IFsmEvent<TResult> e, CancellationToken cancellationToken = default)
         => fsm.TriggerAsync<TResult>(e.GetType(), e, cancellationToken);
-    public static Task<TResult> TriggerIfAvailableAsync<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e, CancellationToken cancellationToken = default)
-        where TData : IFsmEvent
+    public static Task<TResult> TriggerIfAvailableAsync<TResult>(this IEventController<Type> fsm, IFsmEvent<TResult> e, CancellationToken cancellationToken = default)
         => TriggerIfAvailableAsync<Type, TResult>(fsm, e.GetType(), e, cancellationToken);
 
-    public static TResult Trigger<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e)
-        where TData : IFsmEvent
+    public static TResult Trigger<TResult>(this IEventController<Type> fsm, IFsmEvent<TResult> e)
         => fsm.TriggerAsync<TResult>(e.GetType(), e).Result;
-    public static TResult TriggerIfAvailable<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e)
-        where TData : IFsmEvent
+    public static TResult TriggerIfAvailable<TResult>(this IEventController<Type> fsm, IFsmEvent<TResult> e)
         => TriggerIfAvailableAsync<Type, TResult>(fsm, e.GetType(), e).Result;
 
     public static Task<TResult> TriggerAsync<TResult>(this IEventController<Type> fsm, object e, CancellationToken cancellationToken = default)
