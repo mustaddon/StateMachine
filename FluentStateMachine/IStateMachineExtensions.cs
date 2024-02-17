@@ -6,6 +6,20 @@ namespace FluentStateMachine;
 
 public static class IStateMachineExtensions
 {
+    public static async Task<TResult> TriggerIfAvailableAsync<TEvent, TResult>(this IEventController<TEvent> fsm, TEvent e, object data = default, CancellationToken cancellationToken = default)
+        => await fsm.IsAvailableEventAsync(e, data, cancellationToken) ? await fsm.TriggerAsync<TResult>(e, data, cancellationToken) : default;
+
+    public static Task<object> TriggerIfAvailableAsync<TEvent>(this IEventController<TEvent> fsm, TEvent e, object data = default, CancellationToken cancellationToken = default)
+        => TriggerIfAvailableAsync<TEvent, object>(fsm, e, data, cancellationToken);
+
+    public static TResult TriggerIfAvailable<TEvent, TResult>(this IEventController<TEvent> fsm, TEvent e, object data = null)
+        => TriggerIfAvailableAsync<TEvent, TResult>(fsm, e, data).Result;
+
+    public static object TriggerIfAvailable<TEvent>(this IEventController<TEvent> fsm, TEvent e, object data = null)
+        => TriggerIfAvailableAsync<TEvent, object>(fsm, e, data).Result;
+
+
+
     public static Task<object> TriggerAsync<TEvent>(this IEventController<TEvent> fsm, TEvent e, object data = default, CancellationToken cancellationToken = default)
         => fsm.TriggerAsync<object>(e, data, cancellationToken);
 
@@ -17,8 +31,16 @@ public static class IStateMachineExtensions
 
 
 
+    public static async Task<bool> TryJumpToAsync<TState>(this IStateController<TState> fsm, TState state, object data = null, CancellationToken cancellationToken = default)
+        => await fsm.IsAvailableStateAsync(state, data, cancellationToken) && await fsm.JumpToAsync(state, data, cancellationToken);
+
+    public static bool TryJumpTo<TState>(this IStateController<TState> fsm, TState state, object data = null)
+        => TryJumpToAsync(fsm, state, data).Result;
+
     public static bool JumpTo<TState>(this IStateController<TState> fsm, TState state, object data = null)
         => fsm.JumpToAsync(state, data).Result;
+
+
 
     public static void ResetTo<TState>(this IStateController<TState> fsm, TState state)
         => fsm.ResetToAsync(state).Wait();
@@ -76,6 +98,16 @@ public static class IStateMachineExtensions
         where TData : IFsmEvent
         => fsm.TriggerAsync<TResult>((TEvent)e, e).Result;
 
+    public static Task<TResult> TriggerIfAvailableAsyncX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEventData<TData, TResult> e, CancellationToken cancellationToken = default)
+        where TEvent : IFsmEvent
+        where TData : IFsmEvent
+        => TriggerIfAvailableAsync<TEvent, TResult>(fsm, (TEvent)e, e, cancellationToken);
+
+    public static TResult TriggerIfAvailableX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEventData<TData, TResult> e)
+        where TEvent : IFsmEvent
+        where TData : IFsmEvent
+        => TriggerIfAvailableAsync<TEvent, TResult>(fsm, (TEvent)e, e).Result;
+
 
 
     public static Task<TResult> TriggerAsyncX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default, CancellationToken cancellationToken = default)
@@ -85,4 +117,12 @@ public static class IStateMachineExtensions
     public static TResult TriggerX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default)
         where TEvent : IFsmEvent
         => fsm.TriggerAsync<TResult>((TEvent)e, data).Result;
+
+    public static Task<TResult> TriggerIfAvailableAsyncX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default, CancellationToken cancellationToken = default)
+        where TEvent : IFsmEvent
+        => TriggerIfAvailableAsync<TEvent, TResult>(fsm, (TEvent)e, data, cancellationToken);
+
+    public static TResult TriggerIfAvailableX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TData, TResult> e, TData data = default)
+        where TEvent : IFsmEvent
+        => TriggerIfAvailableAsync<TEvent, TResult>(fsm, (TEvent)e, data).Result;
 }

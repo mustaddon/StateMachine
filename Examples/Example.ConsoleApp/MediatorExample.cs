@@ -20,8 +20,7 @@ internal class MediatorExample
             .BuildServiceProvider();
 
         var mediator = services.GetRequiredService<IMediator>();
-        var fsm = services.GetRequiredService<IStateMachine<States, IMediatorEvent>>();
-
+        
         var testEvents = new IMediatorEvent[] {
             new MediatorEvent1 { Num = 10 },
             new MediatorEvent2 { Bit = true },
@@ -33,9 +32,8 @@ internal class MediatorExample
 
         foreach (var e in testEvents)
         {
-            Console.WriteLine($"Current state: {fsm.Current}");
-            Console.WriteLine($"Available events: {string.Join(", ", await fsm.GetAvailableEventsAsync(e))}");
-            Console.WriteLine($"Result: {await mediator.Send(e)}\n\n");
+            var result = await mediator.Send(e);
+            Console.WriteLine($"Result: {result}\n\n");
         }
 
         Console.WriteLine($"Done\n");
@@ -47,12 +45,12 @@ internal class MediatorExample
         {
             return new FsmBuilder<States, IMediatorEvent>(States.S1)
                .OnError(x => Console.WriteLine($"{x.Event}: On error ({x.Error})"))
-               .OnTrigger(x => Console.WriteLine($"{x.Event}: On trigger"))
+               .OnTrigger(x => Console.WriteLine($"{x.Event}: Triggered in state '{x.State}'"))
                .OnComplete(x => Console.WriteLine($"{x.Event}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
-               .OnExit(x => Console.WriteLine($"{x.Event}: Exit state {x.State} to {x.NextState}"))
-               .OnEnter(x => Console.WriteLine($"{x.Event}: Enter state {x.State} from {x.PrevState}"))
-               .OnJump(x => Console.WriteLine($"{x.Event}: On jump to {x.State} from {x.PrevState}"))
-               .OnReset(x => Console.WriteLine($"Reset to {x.State} from {x.PrevState}"))
+               .OnExit(x => Console.WriteLine($"{x.Event}: Exit state '{x.State}' to '{x.NextState}'"))
+               .OnEnter(x => Console.WriteLine($"{x.Event}: Enter state '{x.State}' from '{x.PrevState}'"))
+               .OnJump(x => Console.WriteLine($"{x.Event}: On jump to '{x.State}' from '{x.PrevState}'"))
+               .OnReset(x => Console.WriteLine($"Reset to '{x.State}' from '{x.PrevState}'"))
                .OnX(MediatorEvent0.Value).Execute(x => "shared to all states")
 
                .State(States.S1)
@@ -64,15 +62,18 @@ internal class MediatorExample
                        })
                    .OnX(MediatorEvent2.Value).JumpTo(States.S2)
                    .OnX(MediatorEvent3.Value).Execute(x => x.Data.ToString()).JumpTo(States.S3)
+
                .State(States.S2)
                    //.OnEnter(x => x.Fsm.JumpTo(States.S3)) // test skip state
                    .Enable(async x => { await Task.Delay(500); return true; })
                    .OnX(MediatorEvent1.Value)
                        .Execute(x => x.Data.Num * 100)
                        .JumpTo(async x => { await Task.Delay(500); return States.S1; })
+
                .State(States.S3)
                    .OnEnter(x => Console.WriteLine($"{x.Event}: Final state !!!"))
                    .OnX(MediatorEvent0.Value).Execute(x => $"overridden shared result !!!")
+
                .Build(concurrent: true);
         }
     }

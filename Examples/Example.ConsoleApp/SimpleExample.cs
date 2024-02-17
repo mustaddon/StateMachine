@@ -33,14 +33,17 @@ internal class SimpleExample
                     })
                 .On(Events.E2).JumpTo(States.S2)
                 .On(Events.E3).Execute(x => x.Data.ToString()).JumpTo(States.S3)
+
             .State(States.S2)
                 .Enable(async x => { await Task.Delay(500); return true; })
                 .On<int>(Events.E1) // with args cast 
                     .Execute(x => x.Data * 100)
                     .JumpTo(async x => { await Task.Delay(x.Data); return States.S1; })
+
             .State(States.S3)
                 .OnEnter(x => Console.WriteLine($"{x.Event}: Final state !!!"))
                 .On(Events.E0).Execute(x => $"overridden shared result !!!")
+
             .Build();
 
 

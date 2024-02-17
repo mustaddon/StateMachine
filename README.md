@@ -30,4 +30,8 @@ fsm.Trigger(Event.E3);
 // Enter to final state
 ```
 
-[Example.ConsoleApp](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/Program.cs)
+[Example Program.cs](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/Program.cs)
+
+[Example of use in workflows](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/WorkflowExample.cs)
+
+[Example with mediator (MediatR)](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/MediatorExample.cs)

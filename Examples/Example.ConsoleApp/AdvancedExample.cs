@@ -29,15 +29,18 @@ internal class AdvancedExample
                     })
                 .OnX(AdvancedEvents.E2).JumpTo(States.S2)
                 .OnX(AdvancedEvents.E3).Execute(x => x.Data.ToString()).JumpTo(States.S3)
+
             .State(States.S2)
                 //.OnEnter(x => x.Fsm.JumpTo(States.S3)) // test skip state
                 .Enable(async x => { await Task.Delay(500); return true; })
                 .OnX(AdvancedEvents.E1)
                     .Execute(x => x.Data * 100)
                     .JumpTo(async x => { await Task.Delay(500); return States.S1; })
+
             .State(States.S3)
                 .OnEnter(x => Console.WriteLine($"{x.Event}: Final state !!!"))
                 .OnX(AdvancedEvents.E0).Execute(x => $"overridden shared result !!!")
+
             .Build();
 
 
