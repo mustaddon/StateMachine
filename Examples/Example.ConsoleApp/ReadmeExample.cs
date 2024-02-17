@@ -11,7 +11,7 @@ internal class ReadmeExample
         Console.WriteLine($"=== ReadmeExample Start ===\n");
 
         var fsm = new FsmBuilder<States, Events>(States.S1)
-            .OnEnter(x => Console.WriteLine($"State change to {x.Fsm.Current} from {x.PrevState}"))
+            .OnEnter(x => Console.WriteLine($"State change to {x.State} from {x.PrevState}"))
             .State(States.S1)
                 .On(Events.E1).Execute(x => { /* some operations */ return "some data"; })
                 .On(Events.E2).JumpTo(States.S2)
