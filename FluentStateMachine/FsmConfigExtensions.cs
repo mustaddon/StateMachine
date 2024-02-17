@@ -45,6 +45,13 @@ public static class FsmConfigExtensions
 
 
 
+    public static FsmEventConfig<TState, TEvent, TData, TResult> OnA<TState, TEvent, TData, TResult>(this FsmBuilder<TState, TEvent> cfg)
+        where TEvent : Type
+        where TData : IFsmEvent<TData, TResult>
+        => cfg.On<TData, TResult>((TEvent)typeof(TData));
+
+
+
     public static FsmEventConfig<TState, TEvent, TData, TResult> OnX<TState, TEvent, TData, TResult>(this FsmBuilder<TState, TEvent> cfg, IFsmEvent<TData, TResult> e)
         where TEvent : IFsmEvent
         => cfg.On<TData, TResult>((TEvent)e);

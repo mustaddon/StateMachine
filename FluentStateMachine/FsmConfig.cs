@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FluentStateMachine;
 
-public class FsmConfig<TState, TEvent>
+public class FsmConfig<TState, TEvent> : IFsmState<TState>, IFsmEvent<TEvent>
 {
     internal FsmConfig(FsmBuilder<TState, TEvent> root)
     {
@@ -39,6 +39,11 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
 
         return new FsmEventConfig<TState, TEvent, TData, TResult>(Root, eventModel, this);
     }
+
+    public FsmEventConfig<TState, TEvent, TData, object> On<TData>() where TData : IFsmEvent<TData, object>
+        => On<TData, object>((TEvent)(object)typeof(TData));
+    public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>() where TData : IFsmEvent<TData, TResult>
+        => On<TData, TResult>((TEvent)(object)typeof(TData));
 
     public FsmStateConfig<TState, TEvent> OnEnter(Func<IFsmEnterArgs<TState, TEvent>, Task> action)
     {
@@ -76,6 +81,11 @@ public class FsmEventConfig<TState, TEvent, TData, TResult> : FsmConfig<TState, 
     public FsmEventConfig<TState, TEvent, TArgsData, object> On<TArgsData>(TEvent e) => On<TArgsData, object>(e);
     public FsmEventConfig<TState, TEvent, TArgsData, TExecuteResult> On<TArgsData, TExecuteResult>(TEvent e) 
         => Parent != null ? Parent.On<TArgsData, TExecuteResult>(e) : Root.On<TArgsData, TExecuteResult>(e);
+
+    public FsmEventConfig<TState, TEvent, TArgsData, object> On<TArgsData>() where TArgsData : IFsmEvent<TArgsData, object>
+        => On<TArgsData, object>((TEvent)(object)typeof(TData));
+    public FsmEventConfig<TState, TEvent, TArgsData, TExecuteResult> On<TArgsData, TExecuteResult>() where TArgsData : IFsmEvent<TArgsData, TExecuteResult>
+        => On<TArgsData, TExecuteResult>((TEvent)(object)typeof(TData));
 
     internal FsmEventConfig<TState, TEvent, TData, TResult> Execute(Func<IFsmTriggerArgs<TState, TEvent, TData>, Task> fn)
     {

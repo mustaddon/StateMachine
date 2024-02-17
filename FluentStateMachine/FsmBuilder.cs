@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 
 namespace FluentStateMachine;
 
-public class FsmBuilder<TState, TEvent>
+
+public class FsmBuilder<TState, TEvent> : IFsmBuilder<TState, TEvent>
     where TState : notnull
     where TEvent : notnull
 {
@@ -73,6 +74,11 @@ public class FsmBuilder<TState, TEvent>
 
         return new FsmEventConfig<TState, TEvent, TData, TResult>(this, eventModel);
     }
+
+    public FsmEventConfig<TState, TEvent, TData, object> On<TData>() where TData : IFsmEvent<TData, object>
+        => On<TData, object>((TEvent)(object)typeof(TData));
+    public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>() where TData : IFsmEvent<TData, TResult>
+        => On<TData, TResult>((TEvent)(object)typeof(TData));
 
     public FsmStateConfig<TState, TEvent> State(TState state)
     {

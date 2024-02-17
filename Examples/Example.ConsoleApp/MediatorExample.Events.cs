@@ -23,7 +23,7 @@ public class MediatorEvent1() : MediatorEventBaseX<MediatorEvent1, int>(1)
     public int Num { get; set; }
 }
 
-public class MediatorEvent2() : MediatorEventBaseX<MediatorEvent2, bool>(2)
+public class MediatorEvent2() : MediatorEventBaseX<MediatorEvent2, object>(2)
 {
     public bool Bit { get; set; }
 }

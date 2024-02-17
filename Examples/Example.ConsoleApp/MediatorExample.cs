@@ -41,9 +41,9 @@ internal class MediatorExample
 
     public class StateMachineBuilder
     {
-        public static IStateMachine<States, IMediatorEvent> Build()
+        public static IStateMachine<States, Type> Build()
         {
-            return new FsmBuilder<States, IMediatorEvent>(States.S1)
+            return new FsmBuilder<States, Type>(States.S1)
                .OnError(x => Console.WriteLine($"{x.Event}: On error ({x.Error})"))
                .OnTrigger(x => Console.WriteLine($"{x.Event}: Triggered in state '{x.State}'"))
                .OnComplete(x => Console.WriteLine($"{x.Event}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
@@ -51,28 +51,28 @@ internal class MediatorExample
                .OnEnter(x => Console.WriteLine($"{x.Event}: Enter state '{x.State}' from '{x.PrevState}'"))
                .OnJump(x => Console.WriteLine($"{x.Event}: On jump to '{x.State}' from '{x.PrevState}'"))
                .OnReset(x => Console.WriteLine($"Reset to '{x.State}' from '{x.PrevState}'"))
-               .OnX(MediatorEvent0.Value).Execute(x => "shared to all states")
+               //.On<MediatorEvent0, string>().Execute(x => "shared to all states")
 
                .State(States.S1)
-                   .OnX(MediatorEvent1.Value)
+                   .On<MediatorEvent1, int>()
                        .Execute(x =>
                        {
                            Console.WriteLine($"{x.Event}: Execute with args cast and results type check");
                            return x.Data.Num * 10; // some result
                        })
-                   .OnX(MediatorEvent2.Value).JumpTo(States.S2)
-                   .OnX(MediatorEvent3.Value).Execute(x => x.Data.ToString()).JumpTo(States.S3)
+                   .On<MediatorEvent2>().JumpTo(States.S2)
+                   //.On<MediatorEvent3, string>().Execute(x => x.Data.ToString()).JumpTo(States.S3)
 
-               .State(States.S2)
-                   //.OnEnter(x => x.Fsm.JumpTo(States.S3)) // test skip state
-                   .Enable(async x => { await Task.Delay(500); return true; })
-                   .OnX(MediatorEvent1.Value)
-                       .Execute(x => x.Data.Num * 100)
-                       .JumpTo(async x => { await Task.Delay(500); return States.S1; })
+               //.State(States.S2)
+               //    //.OnEnter(x => x.Fsm.JumpTo(States.S3)) // test skip state
+               //    .Enable(async x => { await Task.Delay(500); return true; })
+               //    .On<MediatorEvent1, int>()
+               //        .Execute(x => x.Data.Num * 100)
+               //        .JumpTo(async x => { await Task.Delay(500); return States.S1; })
 
-               .State(States.S3)
-                   .OnEnter(x => Console.WriteLine($"{x.Event}: Final state !!!"))
-                   .OnX(MediatorEvent0.Value).Execute(x => $"overridden shared result !!!")
+               //.State(States.S3)
+               //    .OnEnter(x => Console.WriteLine($"{x.Event}: Final state !!!"))
+               //    .On<MediatorEvent0, string>().Execute(x => $"overridden shared result !!!")
 
                .Build(concurrent: true);
         }
