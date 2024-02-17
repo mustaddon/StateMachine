@@ -12,19 +12,15 @@ public static class AdvancedEvents
     public static readonly AdvancedEvent<int, object> E4 = new(4);
 }
 
-public class AdvancedEvent<TData, TResult>(int id, string? name = null) : AdvancedEventBase(id, name), IFsmEvent<TData, TResult>;
-
-public abstract class AdvancedEventBase(int id, string? name = null) : IAdvancedEvent
-{
+public class AdvancedEvent<TData, TResult>(int id) : IAdvancedEvent, IFsmEvent<TData, TResult>
+{ 
     public int Id { get; } = id;
-    public string Name { get; } = name ?? $"Event-{id}";
     public override int GetHashCode() => Id;
     public override bool Equals(object? obj) => obj is IAdvancedEvent e ? e.Id == Id : obj is int id && id == Id;
-    public override string ToString() => Name;
+    public override string ToString() => $"AdvEvent-{Id}";
 }
 
 public interface IAdvancedEvent : IFsmEvent
 {
     int Id { get; }
-    string Name { get; }
 }

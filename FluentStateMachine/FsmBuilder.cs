@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FluentStateMachine;
 
 
-public class FsmBuilder<TState, TEvent> : IFsmBuilder<TState, TEvent>
+public class FsmBuilder<TState, TEvent>
     where TState : notnull
     where TEvent : notnull
 {

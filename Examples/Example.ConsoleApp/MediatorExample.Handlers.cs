@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Example.ConsoleApp;
 
 public class MediatorHandler<T, TResult>(IStateMachine<States, Type> fsm) : IRequestHandler<T, TResult>
-    where T : IMediatorEvent<IMediatorEvent, TResult>
+    where T : IFsmEvent<IFsmEvent, TResult>, IRequest<TResult>
 {
     public Task<TResult> Handle(T request, CancellationToken cancellationToken)
     {

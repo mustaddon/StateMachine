@@ -89,6 +89,46 @@ public static class IStateMachineExtensions
 
 
 
+
+
+    public static Task<TResult> TriggerAsync<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e, CancellationToken cancellationToken = default)
+        where TData : IFsmEvent
+        => fsm.TriggerAsync<TResult>(e.GetType(), e, cancellationToken);
+    public static Task<TResult> TriggerIfAvailableAsync<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e, CancellationToken cancellationToken = default)
+        where TData : IFsmEvent
+        => TriggerIfAvailableAsync<Type, TResult>(fsm, e.GetType(), e, cancellationToken);
+
+    public static TResult Trigger<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e)
+        where TData : IFsmEvent
+        => fsm.TriggerAsync<TResult>(e.GetType(), e).Result;
+    public static TResult TriggerIfAvailable<TData, TResult>(this IEventController<Type> fsm, IFsmEvent<TData, TResult> e)
+        where TData : IFsmEvent
+        => TriggerIfAvailableAsync<Type, TResult>(fsm, e.GetType(), e).Result;
+
+    public static Task<TResult> TriggerAsync<TResult>(this IEventController<Type> fsm, object e, CancellationToken cancellationToken = default)
+        => fsm.TriggerAsync<TResult>(e.GetType(), e, cancellationToken);
+    public static Task<TResult> TriggerIfAvailableAsync<TResult>(this IEventController<Type> fsm, object e, CancellationToken cancellationToken = default)
+        => TriggerIfAvailableAsync<Type, TResult>(fsm, e.GetType(), e, cancellationToken);
+
+    public static TResult Trigger<TResult>(this IEventController<Type> fsm, object e)
+        => fsm.TriggerAsync<TResult>(e.GetType(), e).Result;
+    public static TResult TriggerIfAvailable<TResult>(this IEventController<Type> fsm, object e)
+        => TriggerIfAvailableAsync<Type, TResult>(fsm, e.GetType(), e).Result;
+
+    public static Task<object> TriggerAsync(this IEventController<Type> fsm, object e, CancellationToken cancellationToken = default)
+        => fsm.TriggerAsync<object>(e.GetType(), e, cancellationToken);
+    public static Task<object> TriggerIfAvailableAsync(this IEventController<Type> fsm, object e, CancellationToken cancellationToken = default)
+        => TriggerIfAvailableAsync<Type, object>(fsm, e.GetType(), e, cancellationToken);
+
+    public static object Trigger(this IEventController<Type> fsm, object e)
+        => fsm.TriggerAsync<object>(e.GetType(), e).Result;
+    public static object TriggerIfAvailable(this IEventController<Type> fsm, object e)
+        => TriggerIfAvailableAsync<Type, object>(fsm, e.GetType(), e).Result;
+
+
+
+
+
     public static Task<TResult> TriggerAsyncX<TEvent, TData, TResult>(this IEventController<TEvent> fsm, IFsmEventData<TData, TResult> e, CancellationToken cancellationToken = default)
         where TEvent : IFsmEvent
         where TData : IFsmEvent
@@ -108,6 +148,8 @@ public static class IStateMachineExtensions
         where TEvent : IFsmEvent
         where TData : IFsmEvent
         => TriggerIfAvailableAsync<TEvent, TResult>(fsm, (TEvent)e, e).Result;
+
+
 
 
 
