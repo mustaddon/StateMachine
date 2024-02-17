@@ -32,6 +32,6 @@ fsm.Trigger(Event.E3);
 
 [Example Program.cs](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/Program.cs)
 
-[Example of use in workflows](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/WorkflowExample.cs)
+[Example of use for workflows](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/WorkflowExample.cs)
 
 [Example with mediator (MediatR)](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/MediatorExample.cs)
