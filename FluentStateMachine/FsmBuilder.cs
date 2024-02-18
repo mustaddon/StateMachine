@@ -11,7 +11,10 @@ public class FsmBuilder<TState, TEvent>
 {
     public FsmBuilder(TState start)
     {
-        _model = new() { Start = start };
+        _model = new() { 
+            Start = start,
+            OnError = x => throw new FsmException(x.Error),
+        };
         _model.States.Add(start, new());
     }
 

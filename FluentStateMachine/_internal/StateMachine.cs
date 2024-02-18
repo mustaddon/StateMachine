@@ -122,7 +122,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         return result;
     }
 
-    public async Task<bool> JumpToAsync(TState next, object data = null, CancellationToken cancellationToken = default)
+    public async Task JumpToAsync(TState next, object data = null, CancellationToken cancellationToken = default)
     {
         var args = new FsmJumpArgs<TState, TEvent>(this)
         {
@@ -135,13 +135,13 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (!_model.States.TryGetValue(next, out var nextModel))
         {
             await OnError(args, "Next state '{0}' not found (state '{1}')", next, args.PrevState).ConfigureAwait(false);
-            return false;
+            return;
         }
 
         if (nextModel.Enable != null && !await nextModel.Enable(args).ConfigureAwait(false))
         {
             await OnError(args, "Next state '{0}' disabled (state '{1}')", next, args.PrevState).ConfigureAwait(false);
-            return false;
+            return;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -151,7 +151,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (_model.OnExit != null)
         {
             await _model.OnExit(args).ConfigureAwait(false);
-            if (!_jump) return true;
+            if (!_jump) return;
         }
 
         var currentModel = _model.States[Current];
@@ -159,7 +159,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (currentModel.OnExit != null)
         {
             await currentModel.OnExit(args).ConfigureAwait(false);
-            if (!_jump) return true;
+            if (!_jump) return;
         }
 
         Current = next;
@@ -167,21 +167,19 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (_model.OnEnter != null)
         {
             await _model.OnEnter(args).ConfigureAwait(false);
-            if (!_jump) return true;
+            if (!_jump) return;
         }
 
         if (nextModel.OnEnter != null)
         {
             await nextModel.OnEnter(args).ConfigureAwait(false);
-            if (!_jump) return true;
+            if (!_jump) return;
         }
 
         if (_model.OnJump != null)
             await _model.OnJump(args).ConfigureAwait(false);
 
         _jump = false;
-
-        return true;
     }
 
     public Task ResetAsync(CancellationToken cancellationToken = default) => ResetToAsync(_model.Start, cancellationToken);

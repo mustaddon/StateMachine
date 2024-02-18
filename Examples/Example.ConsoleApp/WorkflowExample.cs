@@ -35,7 +35,6 @@ internal class WorkflowExample
         public static IStateMachine<WorkflowStates, WorkflowActions> Build(ExampleEntity entity)
         {
             return new FsmBuilder<WorkflowStates, WorkflowActions>(entity.State)
-                .OnError(x => throw new Exception(x.Error))
                 .OnFire(x => Console.WriteLine($">>> Trigger event '{x.Event}'"))
                 .OnComplete(x => Console.WriteLine())
                 .OnEnter(x => { 

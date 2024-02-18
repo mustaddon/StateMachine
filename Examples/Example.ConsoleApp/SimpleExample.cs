@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Example.ConsoleApp;
 
-public enum States { S1, S2, S3 }
+public enum States { S1, S2, S3, S4 }
 public enum Events { E0, E1, E2, E3 }
 
 internal class SimpleExample
@@ -15,7 +15,6 @@ internal class SimpleExample
         Console.WriteLine($"=== SimpleExample Start ===\n");
 
         var fsm = new FsmBuilder<States, Events>(States.S1)
-            .OnError(x => throw new Exception(x.Error))
             .OnTrigger(x => Console.WriteLine($"{x.Event}: On trigger"))
             .OnComplete(x => Console.WriteLine($"{x.Event}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
             .OnExit(x => Console.WriteLine($"{x.Event}: Exit state {x.State} to {x.NextState}"))

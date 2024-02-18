@@ -34,17 +34,24 @@ internal class FsmConcurrentDecorator<TState, TEvent>(IStateMachine<TState, TEve
         finally { _semaphore.Release(); }
     }
 
-    public async Task<bool> JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default)
+    public async Task JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default)
     {
         await _semaphore.WaitAsync(cancellationToken);
-        try { return await _fsm.JumpToAsync(state, data, cancellationToken); }
+        try { await _fsm.JumpToAsync(state, data, cancellationToken); }
         finally { _semaphore.Release(); }
     }
 
     public async Task<bool> TryJumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default)
     {
         await _semaphore.WaitAsync(cancellationToken);
-        try { return await _fsm.IsAvailableStateAsync(state, data, cancellationToken) && await _fsm.JumpToAsync(state, data, cancellationToken); }
+        try
+        {
+            if (!await _fsm.IsAvailableStateAsync(state, data, cancellationToken))
+                return false;
+
+            await _fsm.JumpToAsync(state, data, cancellationToken);
+            return true;
+        }
         finally { _semaphore.Release(); }
     }
 

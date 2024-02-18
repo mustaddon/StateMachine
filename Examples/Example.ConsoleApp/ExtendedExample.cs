@@ -11,7 +11,6 @@ internal class ExtendedExample
         Console.WriteLine($"=== ExtendedExample Start ===\n");
 
         var fsm = new FsmBuilder<States, IExtendedEvent>(States.S1)
-            .OnError(x => throw new Exception(x.Error))
             .OnTrigger(x => Console.WriteLine($"{x.Event}: On trigger"))
             .OnComplete(x => Console.WriteLine($"{x.Event}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
             .OnExit(x => Console.WriteLine($"{x.Event}: Exit state {x.State} to {x.NextState}"))

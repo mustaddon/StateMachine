@@ -9,14 +9,22 @@ namespace FluentStateMachine;
 public static class IStateMachineExtensions
 {
     public static async Task<bool> TryJumpToAsync<TState>(this IStateController<TState> fsm, TState state, object data = null, CancellationToken cancellationToken = default)
-        => fsm is IConcurrentStateController<TState> concurrent ? await concurrent.TryJumpToAsync(state, data, cancellationToken)
-            : (await fsm.IsAvailableStateAsync(state, data, cancellationToken) && await fsm.JumpToAsync(state, data, cancellationToken));
+    {
+        if (fsm is IConcurrentStateController<TState> concurrent)
+            return await concurrent.TryJumpToAsync(state, data, cancellationToken);
+
+        if (!await fsm.IsAvailableStateAsync(state, data, cancellationToken))
+            return false;
+
+        await fsm.JumpToAsync(state, data, cancellationToken);
+        return true;
+    }
 
     public static bool TryJumpTo<TState>(this IStateController<TState> fsm, TState state, object data = null)
         => TryJumpToAsync(fsm, state, data).Result;
 
-    public static bool JumpTo<TState>(this IStateController<TState> fsm, TState state, object data = null)
-        => fsm.JumpToAsync(state, data).Result;
+    public static void JumpTo<TState>(this IStateController<TState> fsm, TState state, object data = null)
+        => fsm.JumpToAsync(state, data).Wait();
 
 
 

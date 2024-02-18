@@ -16,7 +16,7 @@ public interface IStateController<TState>
     TState Current { get; }
     ICollection<TState> States { get; }
     Task<bool> IsAvailableStateAsync(TState value, object data = null, CancellationToken cancellationToken = default);
-    Task<bool> JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default);
+    Task JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default);
     Task ResetToAsync(TState state, CancellationToken cancellationToken = default);
 }
 
