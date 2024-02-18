@@ -15,7 +15,7 @@ internal class SimpleExample
         Console.WriteLine($"=== SimpleExample Start ===\n");
 
         var fsm = new FsmBuilder<States, Events>(States.S1)
-            .OnError(x => Console.WriteLine($"{x.Event}: On error ({x.Error})"))
+            .OnError(x => throw new Exception(x.Error))
             .OnTrigger(x => Console.WriteLine($"{x.Event}: On trigger"))
             .OnComplete(x => Console.WriteLine($"{x.Event}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
             .OnExit(x => Console.WriteLine($"{x.Event}: Exit state {x.State} to {x.NextState}"))

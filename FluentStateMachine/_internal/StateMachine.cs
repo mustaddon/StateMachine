@@ -74,17 +74,18 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
         if (_model.OnTrigger != null)
             await _model.OnTrigger(args).ConfigureAwait(false);
 
-        var stateModel = _model.States[Current];
+        var state = Current;
+        var stateModel = _model.States[state];
 
         if (!stateModel.Events.TryGetValue(e, out var eventModel) && !_model.Events.TryGetValue(e, out eventModel))
         {
-            await OnError(args, "Event '{0}' not found", e).ConfigureAwait(false);
+            await OnError(args, "Event '{0}' not found (state '{1}')", e, state).ConfigureAwait(false);
             return default;
         }
 
         if (eventModel.Enable != null && !await eventModel.Enable(args).ConfigureAwait(false))
         {
-            await OnError(args, "Event '{0}' disabled", e).ConfigureAwait(false);
+            await OnError(args, "Event '{0}' disabled (state '{1}')", e, state).ConfigureAwait(false);
             return default;
         }
 
@@ -133,13 +134,13 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
 
         if (!_model.States.TryGetValue(next, out var nextModel))
         {
-            await OnError(args, "Next state '{0}' not found", next).ConfigureAwait(false);
+            await OnError(args, "Next state '{0}' not found (state '{1}')", next, args.PrevState).ConfigureAwait(false);
             return false;
         }
 
         if (nextModel.Enable != null && !await nextModel.Enable(args).ConfigureAwait(false))
         {
-            await OnError(args, "Next state '{0}' disabled", next).ConfigureAwait(false);
+            await OnError(args, "Next state '{0}' disabled (state '{1}')", next, args.PrevState).ConfigureAwait(false);
             return false;
         }
 

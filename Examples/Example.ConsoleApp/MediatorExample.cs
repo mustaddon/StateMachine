@@ -44,7 +44,7 @@ internal class MediatorExample
         public static IStateMachine<States, Type> Build()
         {
             return new FsmBuilder<States, Type>(States.S1)
-                .OnError(x => Console.WriteLine($"{x.Event.Name}: On error ({x.Error})"))
+                .OnError(x => throw new Exception(x.Error))
                 .OnTrigger(x => Console.WriteLine($"{x.Event.Name}: Triggered in state '{x.State}'"))
                 .OnComplete(x => Console.WriteLine($"{x.Event.Name}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
                 .OnExit(x => Console.WriteLine($"{x.Event.Name}: Exit state '{x.State}' to '{x.NextState}'"))
@@ -60,7 +60,7 @@ internal class MediatorExample
                             Console.WriteLine($"{x.Event.Name}: Execute with args cast and results type check");
                             return x.Data.Num / 10d; // some result
                         })
-                    .On<MediatorRequest2>()
+                    .On<MediatorRequest2>().Enable(x => false)
                         .JumpTo(x => x.Data.Bit ? States.S2 : States.S3) // condition jump
                     .On<MediatorRequest3, string>()
                         .Execute(x => $"({x.Data.Num}, {x.Data.Text})")
