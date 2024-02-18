@@ -125,18 +125,18 @@ public static class IStateMachineExtensions
 
 
 
-    public static Task<TResult> TriggerAsyncX<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default, CancellationToken cancellationToken = default)
+    public static Task<TResult> TriggerAsync<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default, CancellationToken cancellationToken = default)
         where TEvent : IFsmEvent
         => fsm.TriggerAsync<TResult>((TEvent)e, data, cancellationToken);
-    public static Task<TResult> TriggerIfAvailableAsyncX<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default, CancellationToken cancellationToken = default)
+    public static Task<TResult> TriggerIfAvailableAsync<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default, CancellationToken cancellationToken = default)
         where TEvent : IFsmEvent
         => TriggerIfAvailableAsync<TEvent, TResult>(fsm, (TEvent)e, data, cancellationToken);
 
 
-    public static TResult TriggerX<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default)
+    public static TResult Trigger<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default)
         where TEvent : IFsmEvent
         => fsm.TriggerAsync<TResult>((TEvent)e, data).Result;
-    public static TResult TriggerIfAvailableX<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default)
+    public static TResult TriggerIfAvailable<TEvent, TResult>(this IEventController<TEvent> fsm, IFsmEvent<TResult> e, object data = default)
         where TEvent : IFsmEvent
         => TriggerIfAvailableAsync<TEvent, TResult>(fsm, (TEvent)e, data).Result;
 
