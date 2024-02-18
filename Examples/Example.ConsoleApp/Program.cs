@@ -14,8 +14,8 @@ class Program
 
         await WorkflowExample.Run();
 
-        await AdvancedExample.Run();
-
         await MediatorExample.Run();
+
+        await ExtendedExample.Run();
     }
 }

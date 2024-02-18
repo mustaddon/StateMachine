@@ -33,7 +33,7 @@ internal sealed class StateMachine<TState, TEvent> : IStateMachine<TState, TEven
     {
         if (!_model.States.TryGetValue(value, out var stateModel))
             return Task.FromResult(false);
-
+        
         if (stateModel.Enable == null)
             return Task.FromResult(true);
 

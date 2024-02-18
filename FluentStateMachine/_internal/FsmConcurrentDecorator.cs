@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 
 namespace FluentStateMachine._internal;
 
-internal class FsmConcurrentDecorator<TState, TEvent>(IStateMachine<TState, TEvent> fsm) : IStateMachine<TState, TEvent>
+
+internal class FsmConcurrentDecorator<TState, TEvent>(IStateMachine<TState, TEvent> fsm) : IConcurrentStateMachine<TState, TEvent> 
 {
     readonly IStateMachine<TState, TEvent> _fsm = fsm;
     readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -26,10 +27,24 @@ internal class FsmConcurrentDecorator<TState, TEvent>(IStateMachine<TState, TEve
         finally { _semaphore.Release(); }
     }
 
+    public async Task<TResult> TriggerIfAvailableAsync<TResult>(TEvent e, object data = null, CancellationToken cancellationToken = default)
+    {
+        await _semaphore.WaitAsync(cancellationToken);
+        try { return await _fsm.IsAvailableEventAsync(e, data, cancellationToken) ? await _fsm.TriggerAsync<TResult>(e, data, cancellationToken) : default; }
+        finally { _semaphore.Release(); }
+    }
+
     public async Task<bool> JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default)
     {
         await _semaphore.WaitAsync(cancellationToken);
         try { return await _fsm.JumpToAsync(state, data, cancellationToken); }
+        finally { _semaphore.Release(); }
+    }
+
+    public async Task<bool> TryJumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default)
+    {
+        await _semaphore.WaitAsync(cancellationToken);
+        try { return await _fsm.IsAvailableStateAsync(state, data, cancellationToken) && await _fsm.JumpToAsync(state, data, cancellationToken); }
         finally { _semaphore.Release(); }
     }
 
@@ -46,4 +61,16 @@ internal class FsmConcurrentDecorator<TState, TEvent>(IStateMachine<TState, TEve
         try { await _fsm.ResetAsync(cancellationToken); }
         finally { _semaphore.Release(); }
     }
+}
+
+
+interface IConcurrentStateMachine<TState, TEvent> : IStateMachine<TState, TEvent>, IConcurrentStateController<TState>, IConcurrentEventController<TEvent>;
+
+interface IConcurrentStateController<TState> : IStateController<TState>
+{
+    Task<bool> TryJumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default);
+}
+interface IConcurrentEventController<TEvent> : IEventController<TEvent>
+{
+    Task<TResult> TriggerIfAvailableAsync<TResult>(TEvent e, object data = null, CancellationToken cancellationToken = default);
 }
