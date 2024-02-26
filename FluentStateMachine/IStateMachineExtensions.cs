@@ -31,7 +31,7 @@ public static class IStateMachineExtensions
     public static void ResetTo<TState>(this IStateController<TState> fsm, TState state)
         => fsm.ResetToAsync(state).Wait();
 
-    public static void Reset(this IStateMachine fsm)
+    public static void Reset(this IStateController fsm)
         => fsm.ResetAsync().Wait();
 
 

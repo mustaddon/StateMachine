@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 namespace FluentStateMachine;
 
 public interface IStateMachine<TState, TEvent> : IStateMachine, IStateController<TState>, IEventController<TEvent>;
+public interface IStateMachine : IStateController, IEventController;
 
-public interface IStateMachine
-{
-    Task ResetAsync(CancellationToken cancellationToken = default);
-}
 
-public interface IStateController<TState>
+
+public interface IStateController<TState> : IStateController
 {
     TState Current { get; }
     ICollection<TState> States { get; }
@@ -19,10 +17,17 @@ public interface IStateController<TState>
     Task JumpToAsync(TState state, object data = null, CancellationToken cancellationToken = default);
     Task ResetToAsync(TState state, CancellationToken cancellationToken = default);
 }
+public interface IStateController
+{
+    Task ResetAsync(CancellationToken cancellationToken = default);
+}
 
-public interface IEventController<TEvent>
+
+
+public interface IEventController<TEvent> : IEventController
 {
     ICollection<TEvent> Events { get; }
     Task<bool> IsAvailableEventAsync(TEvent value, object data = null, CancellationToken cancellationToken = default);
     Task<TResult> TriggerAsync<TResult>(TEvent e, object data = null, CancellationToken cancellationToken = default);
 }
+public interface IEventController;
