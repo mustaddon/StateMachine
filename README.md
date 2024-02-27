@@ -38,7 +38,7 @@ fsm.Trigger(Event.E3);
 ```C#
 class Event1 : IFsmEvent<string>
 {
-    public string? SomeProp { get; set; }
+    public int SomeProp { get; set; }
 }
 
 class Event2 : IFsmEvent<object>;
@@ -48,10 +48,10 @@ class Event3 : IFsmEvent<object>;
 var fsm = new FsmBuilder<States, Type>(States.S1)
     .OnEnter(x => Console.WriteLine($"State change to {x.State} from {x.PrevState}"))
     .State(States.S1)
-        .On<Event1, string>().Execute(x => { /* some operations */ return $"{x.Data.SomeProp} results"; })
+        .On<Event1, string>().Execute(x => $"{x.Data.SomeProp} results")
         .On<Event2>().JumpTo(States.S2)
     .State(States.S2)
-        .On<Event3>().Enable(x => /* some conditions */ true).JumpTo(States.S3)
+        .On<Event3>().JumpTo(States.S3)
     .State(States.S3)
         .OnEnter(x => Console.WriteLine($"Enter to final state"))
     .Build();
@@ -67,7 +67,7 @@ fsm.Trigger(new Event3());
 
 
 // Console output:
-// example results
+// 123 results
 // State change to S2 from S1
 // State change to S3 from S2
 // Enter to final state

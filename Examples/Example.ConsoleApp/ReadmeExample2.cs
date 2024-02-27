@@ -14,11 +14,11 @@ internal class ReadmeExample2
             .OnEnter(x => Console.WriteLine($"State change to {x.State} from {x.PrevState}"))
 
             .State(States.S1)
-                .On<Event1, string>().Execute(x => { /* some operations */ return $"{x.Data.SomeProp} results"; })
+                .On<Event1, string>().Execute(x => $"{x.Data.SomeProp} results")
                 .On<Event2>().JumpTo(States.S2)
 
             .State(States.S2)
-                .On<Event3>().Enable(x => /* some conditions */ true).JumpTo(States.S3)
+                .On<Event3>().JumpTo(States.S3)
 
             .State(States.S3)
                 .OnEnter(x => Console.WriteLine($"Enter to final state"))
@@ -26,10 +26,7 @@ internal class ReadmeExample2
             .Build();
 
 
-        Console.WriteLine(fsm.Trigger(new Event1
-        {
-            SomeProp = "example"
-        }));
+        Console.WriteLine(fsm.Trigger(new Event1 { SomeProp = 123 }));
 
         fsm.Trigger(new Event2());
 
@@ -41,7 +38,7 @@ internal class ReadmeExample2
 
     class Event1 : IFsmEvent<string>
     {
-        public string? SomeProp { get; set; }
+        public int SomeProp { get; set; }
     }
 
     class Event2 : IFsmEvent<object>;
