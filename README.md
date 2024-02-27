@@ -57,10 +57,10 @@ var fsm = new FsmBuilder<States, Type>(States.S1)
     .Build();
 
 
-Console.WriteLine(fsm.Trigger(new Event1
-{
-    SomeProp = "example"
-}));
+Console.WriteLine(
+    fsm.Trigger(new Event1 { 
+        SomeProp = 123 
+    }));
 
 fsm.Trigger(new Event2());
 fsm.Trigger(new Event3());

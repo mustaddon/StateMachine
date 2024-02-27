@@ -26,7 +26,10 @@ internal class ReadmeExample2
             .Build();
 
 
-        Console.WriteLine(fsm.Trigger(new Event1 { SomeProp = 123 }));
+        Console.WriteLine(
+            fsm.Trigger(new Event1 { 
+                SomeProp = 123 
+            }));
 
         fsm.Trigger(new Event2());
 
