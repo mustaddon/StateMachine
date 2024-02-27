@@ -31,7 +31,7 @@ fsm.Trigger(Event.E3);
 // Enter to final state
 ```
 
-[Example ReadmeExample1.cs](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/ReadmeExample1.cs)
+[ReadmeExample1.cs](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/ReadmeExample1.cs)
 
 
 ## Example with type-based events
@@ -63,7 +63,7 @@ fsm.Trigger(new Event3());
 // State change to S3 from S2
 // Enter to final state
 ```
-[Example ReadmeExample2.cs](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/ReadmeExample2.cs)
+[ReadmeExample2.cs](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/ReadmeExample2.cs)
 
 [Example of use for workflows](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/WorkflowExample.cs)
 
