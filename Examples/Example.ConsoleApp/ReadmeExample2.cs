@@ -38,6 +38,7 @@ internal class ReadmeExample2
         Console.WriteLine($"Done\n");
     }
 
+
     class Event1 : IFsmEvent<string>
     {
         public string? SomeProp { get; set; }

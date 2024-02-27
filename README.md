@@ -36,6 +36,15 @@ fsm.Trigger(Event.E3);
 
 ## Example with type-based events
 ```C#
+class Event1 : IFsmEvent<string>
+{
+    public string? SomeProp { get; set; }
+}
+
+class Event2 : IFsmEvent<object>;
+class Event3 : IFsmEvent<object>;
+```
+```C#
 var fsm = new FsmBuilder<States, Type>(States.S1)
     .OnEnter(x => Console.WriteLine($"State change to {x.State} from {x.PrevState}"))
     .State(States.S1)
