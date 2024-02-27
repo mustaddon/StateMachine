@@ -8,7 +8,8 @@ class Program
 {
     static async Task Main()
     {
-        ReadmeExample.Run();
+        ReadmeExample1.Run();
+        ReadmeExample2.Run();
 
         await SimpleExample.Run();
 
