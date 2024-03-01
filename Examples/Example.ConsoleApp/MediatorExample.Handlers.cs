@@ -14,3 +14,12 @@ public class MediatorHandler<T, TResult>(IStateMachine<States, Type> fsm) : IReq
         return fsm.TriggerAsync<TResult>(typeof(T), request, cancellationToken);
     }
 }
+
+public class MediatorHandler<T>(IStateMachine<States, Type> fsm) : IRequestHandler<T>
+    where T : IFsmEvent, IRequest
+{
+    public Task Handle(T request, CancellationToken cancellationToken)
+    {
+        return fsm.TriggerAsync(typeof(T), request, cancellationToken);
+    }
+}

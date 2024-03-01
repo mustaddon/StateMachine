@@ -1,7 +1,6 @@
 ﻿namespace FluentStateMachine;
 
-public interface IFsmEvent;
-public interface IFsmEvent<TResult> : IFsmEvent;
-public interface IFsmEvent<TData, TResult> : IFsmEvent;
-public interface IFsmEventData<TData, TResult> : IFsmEvent<TData, TResult> where TData : IFsmEvent;
+public interface IFsmEventBase;
+public interface IFsmEvent : IFsmEventBase;
+public interface IFsmEvent<TResult> : IFsmEventBase;
 

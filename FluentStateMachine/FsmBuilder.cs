@@ -78,7 +78,7 @@ public class FsmBuilder<TState, TEvent>
         return new FsmEventConfig<TState, TEvent, TData, TResult>(this, eventModel);
     }
 
-    public FsmEventConfig<TState, TEvent, TData, object> On<TData>() where TData : IFsmEvent<object>
+    public FsmEventConfig<TState, TEvent, TData, object> On<TData>() where TData : IFsmEvent
         => On<TData, object>((TEvent)(object)typeof(TData));
     public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>() where TData : IFsmEvent<TResult>
         => On<TData, TResult>((TEvent)(object)typeof(TData));

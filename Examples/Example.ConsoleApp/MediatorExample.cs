@@ -17,6 +17,7 @@ internal class MediatorExample
             .AddSingleton(x => StateMachineBuilder.Build())
             .AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
             .AddTransient(typeof(IRequestHandler<,>), typeof(MediatorHandler<,>))
+            .AddTransient(typeof(IRequestHandler<>), typeof(MediatorHandler<>))
             .BuildServiceProvider();
 
         var mediator = services.GetRequiredService<IMediator>();
@@ -50,7 +51,7 @@ internal class MediatorExample
                 .OnEnter(x => Console.WriteLine($"{x.Event.Name}: Enter state '{x.State}' from '{x.PrevState}'"))
                 .OnJump(x => Console.WriteLine($"{x.Event.Name}: On jump to '{x.State}' from '{x.PrevState}'"))
                 .OnReset(x => Console.WriteLine($"Reset to '{x.State}' from '{x.PrevState}'"))
-                .On<MediatorRequest0>().Execute(x => "shared to all states")
+                .On<MediatorRequest0, string>().Execute(x => "shared to all states")
 
                 .State(States.S1)
                     .On<MediatorRequest1, double>()
@@ -74,7 +75,7 @@ internal class MediatorExample
 
                 .State(States.S3)
                     .OnEnter(x => Console.WriteLine($"{x.Event.Name}: Final state !!!"))
-                    .On<MediatorRequest0>()
+                    .On<MediatorRequest0, string>()
                         .Execute(x => $"overridden shared result")
 
                 .Build(concurrent: true);

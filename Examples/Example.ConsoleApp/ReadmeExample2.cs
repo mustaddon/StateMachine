@@ -44,6 +44,6 @@ internal class ReadmeExample2
         public int SomeProp { get; set; }
     }
 
-    class Event2 : IFsmEvent<object>;
-    class Event3 : IFsmEvent<object>;
+    class Event2 : IFsmEvent;
+    class Event3 : IFsmEvent;
 }

@@ -40,7 +40,7 @@ public class FsmStateConfig<TState, TEvent> : FsmConfig<TState, TEvent>
         return new FsmEventConfig<TState, TEvent, TData, TResult>(Root, eventModel, this);
     }
 
-    public FsmEventConfig<TState, TEvent, TData, object> On<TData>() where TData : IFsmEvent<object>
+    public FsmEventConfig<TState, TEvent, TData, object> On<TData>() where TData : IFsmEvent
         => On<TData, object>((TEvent)(object)typeof(TData));
     public FsmEventConfig<TState, TEvent, TData, TResult> On<TData, TResult>() where TData : IFsmEvent<TResult>
         => On<TData, TResult>((TEvent)(object)typeof(TData));
@@ -82,7 +82,7 @@ public class FsmEventConfig<TState, TEvent, TData, TResult> : FsmConfig<TState, 
     public FsmEventConfig<TState, TEvent, TArgsData, TExecuteResult> On<TArgsData, TExecuteResult>(TEvent e) 
         => Parent != null ? Parent.On<TArgsData, TExecuteResult>(e) : Root.On<TArgsData, TExecuteResult>(e);
 
-    public FsmEventConfig<TState, TEvent, TArgsData, object> On<TArgsData>() where TArgsData : IFsmEvent<object>
+    public FsmEventConfig<TState, TEvent, TArgsData, object> On<TArgsData>() where TArgsData : IFsmEvent
         => On<TArgsData, object>((TEvent)(object)typeof(TArgsData));
     public FsmEventConfig<TState, TEvent, TArgsData, TExecuteResult> On<TArgsData, TExecuteResult>() where TArgsData : IFsmEvent<TExecuteResult>
         => On<TArgsData, TExecuteResult>((TEvent)(object)typeof(TArgsData));

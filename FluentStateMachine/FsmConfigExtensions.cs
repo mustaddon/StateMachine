@@ -42,18 +42,4 @@ public static class FsmConfigExtensions
     public static FsmEventConfig<TState, TEvent, TData, TResult> JumpTo<TState, TEvent, TData, TResult>(this FsmEventConfig<TState, TEvent, TData, TResult> cfg,
         TState state)
         => cfg.JumpTo(x => Task.FromResult(state));
-
-
-
-    public static FsmEventConfig<TState, TEvent, TData, TResult> OnX<TState, TEvent, TData, TResult>(this FsmBuilder<TState, TEvent> cfg, IFsmEvent<TData, TResult> e)
-        where TEvent : IFsmEvent
-        => cfg.On<TData, TResult>((TEvent)e);
-
-    public static FsmEventConfig<TState, TEvent, TData, TResult> OnX<TState, TEvent, TData, TResult>(this FsmStateConfig<TState, TEvent> cfg, IFsmEvent<TData, TResult> e)
-        where TEvent : IFsmEvent
-        => cfg.On<TData, TResult>((TEvent)e);
-
-    public static FsmEventConfig<TState, TEvent, TArgsData, TExecuteResult> OnX<TState, TEvent, TData, TResult, TArgsData, TExecuteResult>(this FsmEventConfig<TState, TEvent, TData, TResult> cfg, IFsmEvent<TArgsData, TExecuteResult> e)
-        where TEvent : IFsmEvent
-        => cfg.On<TArgsData, TExecuteResult>((TEvent)e);
 }

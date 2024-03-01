@@ -41,8 +41,8 @@ class Event1 : IFsmEvent<string>
     public int SomeProp { get; set; }
 }
 
-class Event2 : IFsmEvent<object>;
-class Event3 : IFsmEvent<object>;
+class Event2 : IFsmEvent;
+class Event3 : IFsmEvent;
 ```
 ```C#
 var fsm = new FsmBuilder<States, Type>(States.S1)
