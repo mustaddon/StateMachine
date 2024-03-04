@@ -11,11 +11,11 @@ public class FsmBuilder<TState, TEvent>
 {
     public FsmBuilder(TState start)
     {
-        _model = new() { 
+        _model = new()
+        {
             Start = start,
             OnError = x => throw new FsmException(x.Error),
         };
-        _model.States.Add(start, new());
     }
 
     private readonly FsmModel<TState, TEvent> _model;
@@ -93,6 +93,9 @@ public class FsmBuilder<TState, TEvent>
 
     public IStateMachine<TState, TEvent> Build(bool concurrent = false)
     {
+        if (!_model.States.ContainsKey(_model.Start))
+            _model.States.Add(_model.Start, new());
+
         var fsm = new StateMachine<TState, TEvent>(_model);
         return !concurrent ? fsm : new FsmConcurrentDecorator<TState, TEvent>(fsm);
     }
