@@ -10,11 +10,8 @@ class Program
     {
         ReadmeExample1.Run();
         ReadmeExample2.Run();
-
         await SimpleExample.Run();
-
         await WorkflowExample.Run();
-
         await MediatorExample.Run();
     }
 }

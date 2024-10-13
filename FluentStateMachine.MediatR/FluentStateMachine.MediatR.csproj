@@ -5,17 +5,17 @@
 	<LangVersion>latest</LangVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\FluentStateMachine.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>1.9.0</AssemblyVersion>
+	<AssemblyVersion>1.9.0</AssemblyVersion>
     <FileVersion>1.9.0</FileVersion>
     <Version>1.9.0</Version>
     
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2024</Copyright>
-    <PackageId>FluentStateMachine</PackageId>
-    <Product>FluentStateMachine</Product>
-    <Title>FluentStateMachine</Title>
-    <Description>Finite-state machine (FSM) with a fluent interface and mediators compatibility</Description>
+    <PackageId>FluentStateMachine.MediatR</PackageId>
+    <Product>FluentStateMachine.MediatR</Product>
+    <Title>FluentStateMachine.MediatR</Title>
+    <Description>Finite-state machine (FSM) with a fluent interface and MediatR compatibility</Description>
     <PackageTags>fluent-statemachine finite-state-machine state-machine fluent-interface mediator-compatible mediatr fluent-workflow workflow fsm</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mustaddon/StateMachine</PackageProjectUrl>
@@ -28,7 +28,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <ProjectReference Include="..\FluentStateMachine\FluentStateMachine.csproj" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+  </ItemGroup>
+
 </Project>

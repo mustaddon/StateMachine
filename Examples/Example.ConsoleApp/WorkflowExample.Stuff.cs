@@ -3,9 +3,11 @@
 public enum WorkflowStates { New, Revision, Approving, Approved, Rejected }
 public enum WorkflowActions { Update, ToApproving, Approve, Reject, ToRevision }
 
-public class ExampleEntity
+public class WorkflowEntity
 {
     public string Name { get; set; } = string.Empty;
-    public WorkflowStates State { get; set; }
     public int AuthorId { get; set; }
+    public WorkflowStates State { get; set; }
 }
+
+

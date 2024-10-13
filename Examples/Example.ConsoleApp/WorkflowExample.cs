@@ -10,7 +10,7 @@ internal class WorkflowExample
     {
         Console.WriteLine($"=== WorkflowExample Start ===\n");
 
-        var entity = new ExampleEntity
+        var entity = new WorkflowEntity
         {
             Name = "test",
             State = WorkflowStates.New,
@@ -32,12 +32,13 @@ internal class WorkflowExample
 
     class WorkflowBuilder
     {
-        public static IStateMachine<WorkflowStates, WorkflowActions> Build(ExampleEntity entity)
+        public static IStateMachine<WorkflowStates, WorkflowActions> Build(WorkflowEntity entity)
         {
             return new FsmBuilder<WorkflowStates, WorkflowActions>(entity.State)
                 .OnFire(x => Console.WriteLine($">>> Trigger event '{x.Event}'"))
                 .OnComplete(x => Console.WriteLine())
-                .OnEnter(x => { 
+                .OnEnter(x =>
+                {
                     entity.State = x.State;
                     Console.WriteLine($"State changed to '{x.State}' from '{x.PrevState}'");
                 })
@@ -80,7 +81,7 @@ internal class WorkflowExample
                .Build();
         }
 
-        static bool IsAuthor(ExampleEntity entity) => entity.AuthorId == 1;
-        static bool IsApprover(ExampleEntity entity) => true;
+        static bool IsAuthor(WorkflowEntity entity) => entity.AuthorId == 1;
+        static bool IsApprover(WorkflowEntity entity) => true;
     }
 }

@@ -1,28 +1,31 @@
-﻿namespace Example.ConsoleApp;
+﻿using FluentStateMachine.MediatR;
 
-public interface IUnifiedRequest<TResult> : MediatR.IRequest<TResult>,  FluentStateMachine.IFsmEvent<TResult>;
-public interface IUnifiedRequest : MediatR.IRequest, FluentStateMachine.IFsmEvent;
+namespace Example.ConsoleApp;
 
+public abstract class ExampleFactoryRequest
+{
+    public int MyEntityId { get; set; }
+}
 
-public class MediatorRequest0 : IUnifiedRequest<string>;
+public class MediatorRequest0 : ExampleFactoryRequest, IFsmRequest<string>;
 
-public class MediatorRequest1 : IUnifiedRequest<double>
+public class MediatorRequest1 : ExampleFactoryRequest, IFsmRequest<double>
 {
     public int Num { get; set; }
 }
 
-public class MediatorRequest2 : IUnifiedRequest
+public class MediatorRequest2 : ExampleFactoryRequest, IFsmRequest
 {
     public bool Bit { get; set; }
 }
 
-public class MediatorRequest3 : IUnifiedRequest<string>
+public class MediatorRequest3 : ExampleFactoryRequest, IFsmRequest<string>
 {
     public int Num { get; set; }
     public string? Text { get; set; }
 }
 
-public class MediatorRequest4 : IUnifiedRequest<object>
+public class MediatorRequest4 : ExampleFactoryRequest, IFsmRequest<object>
 {
     public int Num { get; set; }
 }

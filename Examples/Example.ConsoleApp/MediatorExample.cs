@@ -1,6 +1,4 @@
-﻿using FluentStateMachine;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -14,72 +12,37 @@ internal class MediatorExample
         Console.WriteLine($"=== MediatorExample Start ===\n");
 
         var services = new ServiceCollection()
-            .AddSingleton(x => StateMachineBuilder.Build())
-            .AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
-            .AddTransient(typeof(IRequestHandler<,>), typeof(MediatorHandler<,>))
-            .AddTransient(typeof(IRequestHandler<>), typeof(MediatorHandler<>))
+            // REQUIRED: register FSM services
+            .AddFsm(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
+            .AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                // REQUIRED: add FSM behavior
+                cfg.AddFsmBehavior();
+            })
             .BuildServiceProvider();
 
-        var mediator = services.GetRequiredService<IMediator>();
-        
-        var requests = new object[] {
-            new MediatorRequest1 { Num = 111 },
-            new MediatorRequest2 { Bit = true },
-            new MediatorRequest0 { },
-            new MediatorRequest1 { Num = 555 },
-            new MediatorRequest3 { Num = 777, Text = "test" },
-            new MediatorRequest0 { }
+        var mediator = services.GetRequiredService<MediatR.IMediator>();
+
+        var exampleRequests = new ExampleFactoryRequest[] {
+            new MediatorRequest1 { MyEntityId = 7, Num = 111 },
+            new MediatorRequest2 { MyEntityId = 7, Bit = true },
+            new MediatorRequest0 { MyEntityId = 7, },
+            new MediatorRequest1 { MyEntityId = 7, Num = 555 },
+            new MediatorRequest3 { MyEntityId = 7, Num = 777, Text = "test" },
+            new MediatorRequest0 { MyEntityId = 7, },
         };
 
-        foreach (var request in requests)
+        foreach (var request in exampleRequests)
         {
+            Console.WriteLine($">>> Sending request '{request.GetType()}'");
+
             var result = await mediator.Send(request);
-            Console.WriteLine($"Result: {result}\n\n");
+
+            Console.WriteLine($"Result: {result}\n");
         }
 
         Console.WriteLine($"Done\n");
-    }
-
-    public class StateMachineBuilder
-    {
-        public static IStateMachine<States, Type> Build()
-        {
-            return new FsmBuilder<States, Type>(States.S1)
-                .OnTrigger(x => Console.WriteLine($"{x.Event.Name}: Triggered in state '{x.State}'"))
-                .OnComplete(x => Console.WriteLine($"{x.Event.Name}: On complete (triggered and state{(x.State == x.PrevState ? " NOT " : " ")}changed)"))
-                .OnExit(x => Console.WriteLine($"{x.Event.Name}: Exit state '{x.State}' to '{x.NextState}'"))
-                .OnEnter(x => Console.WriteLine($"{x.Event.Name}: Enter state '{x.State}' from '{x.PrevState}'"))
-                .OnJump(x => Console.WriteLine($"{x.Event.Name}: On jump to '{x.State}' from '{x.PrevState}'"))
-                .OnReset(x => Console.WriteLine($"Reset to '{x.State}' from '{x.PrevState}'"))
-                .On<MediatorRequest0, string>().Execute(x => "shared to all states")
-
-                .State(States.S1)
-                    .On<MediatorRequest1, double>()
-                        .Execute(x =>
-                        {
-                            Console.WriteLine($"{x.Event.Name}: Execute with args cast and results type check");
-                            return x.Data.Num / 10d; // some result
-                        })
-                    .On<MediatorRequest2>()
-                        .JumpTo(x => x.Data.Bit ? States.S2 : States.S3) // condition jump
-                    .On<MediatorRequest3, string>()
-                        .Execute(x => $"({x.Data.Num}, {x.Data.Text})")
-                        .JumpTo(States.S3)
-
-                .State(States.S2)
-                    //.OnEnter(x => x.Fsm.JumpTo(States.S3)) // test skip state
-                    .Enable(async x => { await Task.Delay(500); return true; })
-                    .On<MediatorRequest1, double>()
-                        .Execute(x => x.Data.Num / 100d)
-                        .JumpTo(async x => { await Task.Delay(500); return States.S1; })
-
-                .State(States.S3)
-                    .OnEnter(x => Console.WriteLine($"{x.Event.Name}: Final state !!!"))
-                    .On<MediatorRequest0, string>()
-                        .Execute(x => $"overridden shared result")
-
-                .Build(concurrent: true);
-        }
     }
 }
 
