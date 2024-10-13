@@ -37,6 +37,7 @@ internal class MediatorExample
         {
             Console.WriteLine($">>> Sending request '{request.GetType()}'");
 
+            // The request starts FSM, which is defined in MediatorExample.StateMachines.cs
             var result = await mediator.Send(request);
 
             Console.WriteLine($"Result: {result}\n");
