@@ -17,6 +17,6 @@ var services = new ServiceCollection()
 
 var mediator = services.GetRequiredService<MediatR.IMediator>();
 
-var response = await mediator.Send(new ExamleMediatorRequest { MyEntityId = 7 });
+var response = await mediator.Send(new ExampleMediatorRequest { MyEntityId = 7 });
 ```
 [The full code example can be found here...](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/MediatorExample.cs)
