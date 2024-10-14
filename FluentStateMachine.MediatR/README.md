@@ -2,15 +2,7 @@
 Finite-state machine (FSM) with a fluent interface and MediatR compatibility
 
 
-### .NET CLI
-```cli
-dotnet new console --name "FsmExample"
-cd FsmExample
-dotnet add package FluentStateMachine.MediatR
-dotnet add package Microsoft.Extensions.DependencyInjection
-```
-
-### Program.cs:
+### Example
 ```C#
 var services = new ServiceCollection()
     // REQUIRED: register FSM services
