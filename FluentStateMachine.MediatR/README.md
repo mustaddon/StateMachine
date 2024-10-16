@@ -27,7 +27,7 @@ var response = await mediator.Send(new MediatorRequest1 { MyEntityId = 7 });
 ```C#
 public class ExampleFactory : IFsmFactory<ExampleFactoryRequest>
 {
-    public async Task<IStateMachine> Create(ExampleFactoryRequest request, CancellationToken cancellationToken = default)
+    public async Task<IStateMachine> Create(ExampleFactoryRequest request, CancellationToken cancellationToken)
     {
         // get entity from storage
         var entity = await MockEntityStore.GetEntityById(request.MyEntityId);
