@@ -76,4 +76,4 @@ fsm.Trigger(new Event3());
 
 [Example of use for workflows](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/WorkflowExample.cs)
 
-[Example with mediator (MediatR)](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/MediatorExample.cs)
+[Example with mediator (MediatR)](https://github.com/mustaddon/StateMachine/tree/master/FluentStateMachine.MediatR#fluentstatemachinemediatr-)
