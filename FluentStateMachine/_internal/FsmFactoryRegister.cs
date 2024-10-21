@@ -10,11 +10,11 @@ namespace FluentStateMachine._internal;
 internal class FsmFactoryRegister(IServiceCollection services)
 {
     readonly Lazy<HashSet<Type>> _registred = new(() => new(GetFactoryTypes(services)));
-    readonly ConcurrentDictionary<Type, Type> _cache = new();
+    readonly ConcurrentDictionary<Type, Lazy<Type>> _found = new();
 
     public Type FindFactoryTypeForRequest(Type requestType)
     {
-        return _cache.GetOrAdd(requestType, CreateCacheValue);
+        return _found.GetOrAdd(requestType, x => new(() => CreateCacheValue(x))).Value;
     }
 
     Type CreateCacheValue(Type type)
