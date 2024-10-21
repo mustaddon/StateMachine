@@ -30,8 +30,16 @@ internal class FsmFactoryRegister(IServiceCollection services)
     static IEnumerable<Type> GetFactoryTypes(IServiceCollection services)
     {
         var facOpenType = typeof(IFsmFactory<>);
-        foreach (var type in services.Select(x => x.ServiceType))
+
+        foreach (var sd in services)
+        {
+            if (sd.IsKeyedService)
+                continue;
+
+            var type = sd.ServiceType;
+
             if (type.IsInterface && type.IsGenericType && !type.IsGenericTypeDefinition && type.GetGenericTypeDefinition() == facOpenType)
                 yield return type;
+        }
     }
 }
