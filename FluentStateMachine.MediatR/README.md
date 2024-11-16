@@ -2,7 +2,7 @@
 Finite-state machine (FSM) with a fluent interface and MediatR compatibility.
 
 <!-- ![](https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm_small.png) -->
-[<img src="https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png" width="400" />](https://app.dgrm.net/)
+[<img src="https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png" width="400" />](https://app.dgrm.net/?u=https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png)
 
 ### Example
 ```C#
