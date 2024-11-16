@@ -1,8 +1,6 @@
 # FluentStateMachine.MediatR [![NuGet version](https://badge.fury.io/nu/FluentStateMachine.MediatR.svg)](http://badge.fury.io/nu/FluentStateMachine.MediatR)
 Finite-state machine (FSM) with a fluent interface and MediatR compatibility.
 
-<!-- ![](https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm_small.png) -->
-[<img src="https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png" width="400" />](https://app.dgrm.net/?u=https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png)
 
 ### Example
 ```C#
@@ -49,3 +47,8 @@ public class ExampleFactory : IFsmFactory<ExampleFactoryRequest>
 }
 ```
 [The full code example can be found here...](https://github.com/mustaddon/StateMachine/blob/master/Examples/Example.ConsoleApp/MediatorExample.cs)
+
+
+### Concept
+<!-- ![](https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png) -->
+[<img src="https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png" width="400" />](https://app.dgrm.net/?u=https://raw.githubusercontent.com/mustaddon/StateMachine/master/FluentStateMachine.MediatR/dgrm.png)
